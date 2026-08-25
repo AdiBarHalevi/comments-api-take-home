@@ -21,6 +21,9 @@
     "mocks": "concurrently -k -p \"[{name}]\" -n \"Instagram,X\" -c \"magenta.bold,blue.bold\" \"npm:mock:instagram\" \"npm:mock:x\"",
     "mock:instagram": "mockoon-cli start --data mocks/mockoon/instagram.json --port 3001",
     "mock:x": "mockoon-cli start --data mocks/mockoon/x.json --port 3002",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "bootstrap": "docker compose up -d --wait",
     "openapi:lint": "redocly lint docs/openapi.yaml",
     "openapi:bundle": "redocly bundle docs/openapi.yaml -o docs/openapi.bundled.yaml"
   },
@@ -30,6 +33,8 @@
   "dependencies": {
     "@fastify/autoload": "^6.0.0",
     "@fastify/sensible": "^6.0.0",
+    "@fastify/swagger": "^9.8.1",
+    "@fastify/swagger-ui": "^6.1.1",
     "dotenv": "^17.4.2",
     "fastify": "^5.0.0",
     "fastify-cli": "^8.0.0",
@@ -39,6 +44,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@mockoon/cli": "^9.8.0",
+    "@redocly/cli": "^2.47.0",
     "@types/node": "^25.9.5",
     "c8": "^11.0.0",
     "concurrently": "^9.0.0",
@@ -48,7 +54,6 @@
     "prettier": "^3.9.6",
     "ts-node": "^10.4.0",
     "typescript": "~5.9.2",
-    "typescript-eslint": "^8.68.0",
-    "@redocly/cli": "^2.47.0"
+    "typescript-eslint": "^8.68.0"
   }
 }

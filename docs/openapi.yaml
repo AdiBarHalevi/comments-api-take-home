@@ -1,0 +1,110 @@
+openapi: 3.1.0
+info:
+  title: Comments API
+  version: 1.0.0
+  description: |
+    Platform-agnostic REST API for reading comments on published posts and creating
+    async replies. Comments are materialized locally on read; outbound replies are
+    created asynchronously and polled by id.
+
+    See [design.md](./design.md) for architecture, data model, and assumptions.
+  license:
+    name: ISC
+    url: https://opensource.org/licenses/ISC
+
+servers:
+  - url: http://localhost:3000
+    description: Local development (Fastify)
+
+tags:
+  - name: Comments
+    description: Read and reply to comments on published posts
+
+security: []
+
+paths:
+  /posts/{postId}/comments:
+    get:
+      operationId: getCommentsByPostId
+      tags: [Comments]
+      summary: Get comments by post id
+      description: |
+        Fetches comments from the post's platform, upserts them locally, and returns
+        stable internal ids. Use `id` (not `externalId`) when calling reply endpoints.
+      parameters:
+        - $ref: './openapi/components/parameters.yaml#/postId'
+        - $ref: './openapi/components/parameters.yaml#/cursor'
+        - $ref: './openapi/components/parameters.yaml#/limit'
+      responses:
+        '200':
+          $ref: './openapi/components/responses.yaml#/GetCommentsByPostIdSuccess'
+        '400':
+          $ref: './openapi/components/responses.yaml#/BadRequest'
+        '404':
+          $ref: './openapi/components/responses.yaml#/NotFound'
+
+  /comments/{commentId}:
+    get:
+      operationId: getCommentById
+      tags: [Comments]
+      summary: Get comment by id
+      description: |
+        Returns a single comment. Used to poll outbound reply status after
+        `POST /comments/{commentId}/replies` — the same id is returned in the `202` body.
+
+        Materialized platform comments have `status` omitted or `null` and a platform
+        `externalId`. Outbound replies carry `status` (`PENDING`, `SYNCED`, or `FAILED`).
+      parameters:
+        - $ref: './openapi/components/parameters.yaml#/commentId'
+      responses:
+        '200':
+          $ref: './openapi/components/responses.yaml#/GetCommentByIdSuccess'
+        '404':
+          $ref: './openapi/components/responses.yaml#/NotFound'
+
+  /comments/{commentId}/replies:
+    get:
+      operationId: getRepliesByCommentId
+      tags: [Comments]
+      summary: Get replies by comment id
+      description: |
+        Fetches replies from the platform for the given parent comment, upserts them
+        locally with `parentId` set to the parent, and returns local rows.
+
+        Local `PENDING` outbound replies are **not** merged into this paginated response;
+        poll them via `GET /comments/{commentId}` instead.
+      parameters:
+        - $ref: './openapi/components/parameters.yaml#/commentId'
+        - $ref: './openapi/components/parameters.yaml#/cursor'
+        - $ref: './openapi/components/parameters.yaml#/limit'
+      responses:
+        '200':
+          $ref: './openapi/components/responses.yaml#/GetRepliesByCommentIdSuccess'
+        '400':
+          $ref: './openapi/components/responses.yaml#/BadRequest'
+        '404':
+          $ref: './openapi/components/responses.yaml#/NotFound'
+
+    post:
+      operationId: createReplyByCommentId
+      tags: [Comments]
+      summary: Reply to a comment
+      description: |
+        Creates an outbound reply asynchronously. The handler returns immediately with
+        a `PENDING` comment; a background worker posts to the platform.
+
+        Poll `GET /comments/{id}` (same id returned here) until `status` is `SYNCED`
+        or `FAILED`. After `SYNCED`, the reply appears in normal platform paginated GETs.
+      parameters:
+        - $ref: './openapi/components/parameters.yaml#/commentId'
+      requestBody:
+        $ref: './openapi/components/requestBodies.yaml#/CreateReplyByCommentIdRequest'
+      responses:
+        '202':
+          $ref: './openapi/components/responses.yaml#/CreateReplyByCommentIdAccepted'
+        '400':
+          $ref: './openapi/components/responses.yaml#/BadRequest'
+        '404':
+          $ref: './openapi/components/responses.yaml#/ParentCommentNotFound'
+        '503':
+          $ref: './openapi/components/responses.yaml#/ServiceUnavailable'

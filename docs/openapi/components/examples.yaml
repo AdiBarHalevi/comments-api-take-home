@@ -1,0 +1,86 @@
+GetCommentsByPostIdFirstPage:
+  summary: First page of post comments
+  value:
+    data:
+      - id: 550e8400-e29b-41d4-a716-446655440000
+        externalId: '17858893269000001'
+        text: Nice post!
+        parentId: null
+        authorUsername: fan_account
+    pagination:
+      nextCursor: eyJvZmZzZXQiOjUwfQ
+
+MaterializedComment:
+  summary: Materialized platform comment
+  value:
+    id: 550e8400-e29b-41d4-a716-446655440000
+    externalId: '17858893269000001'
+    text: Nice post!
+    parentId: null
+    authorUsername: fan_account
+    lastError: null
+
+PendingReply:
+  summary: Outbound reply still pending
+  value:
+    id: 660e8400-e29b-41d4-a716-446655440001
+    status: PENDING
+    text: Thanks!
+    parentId: 550e8400-e29b-41d4-a716-446655440000
+    externalId: null
+    lastError: null
+
+SyncedReply:
+  summary: Outbound reply synced to platform
+  value:
+    id: 660e8400-e29b-41d4-a716-446655440001
+    status: SYNCED
+    text: Thanks!
+    parentId: 550e8400-e29b-41d4-a716-446655440000
+    externalId: '17858893269000002'
+    lastError: null
+
+FailedReply:
+  summary: Outbound reply failed
+  value:
+    id: 660e8400-e29b-41d4-a716-446655440001
+    status: FAILED
+    text: Thanks!
+    parentId: 550e8400-e29b-41d4-a716-446655440000
+    externalId: null
+    lastError: Platform rate limit exceeded
+
+PendingReplyAccepted:
+  value:
+    id: 660e8400-e29b-41d4-a716-446655440001
+    status: PENDING
+    text: Thanks!
+    parentId: 550e8400-e29b-41d4-a716-446655440000
+
+CreateReplyByCommentIdRequestExample:
+  value:
+    text: Thanks!
+
+BadRequestError:
+  value:
+    statusCode: 400
+    error: Bad Request
+    message: limit must be between 1 and 100
+
+NotFoundError:
+  value:
+    statusCode: 404
+    error: Not Found
+    message: Post not found
+
+ParentCommentNotFoundError:
+  value:
+    statusCode: 404
+    error: Not Found
+    message: Comment not found
+
+ServiceUnavailableError:
+  value:
+    statusCode: 503
+    error: Service Unavailable
+    message: Queue unavailable

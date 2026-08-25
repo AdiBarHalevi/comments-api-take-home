@@ -1,0 +1,82 @@
+GetCommentsByPostIdSuccess:
+  description: Paginated comments for the post
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/operations.yaml#/GetCommentsByPostIdResponse'
+      examples:
+        firstPage:
+          $ref: './examples.yaml#/GetCommentsByPostIdFirstPage'
+
+GetCommentByIdSuccess:
+  description: Comment found
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/operations.yaml#/GetCommentByIdResponse'
+      examples:
+        materialized:
+          $ref: './examples.yaml#/MaterializedComment'
+        pendingReply:
+          $ref: './examples.yaml#/PendingReply'
+        syncedReply:
+          $ref: './examples.yaml#/SyncedReply'
+        failedReply:
+          $ref: './examples.yaml#/FailedReply'
+
+GetRepliesByCommentIdSuccess:
+  description: Paginated replies for the comment
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/operations.yaml#/GetRepliesByCommentIdResponse'
+
+CreateReplyByCommentIdAccepted:
+  description: Reply accepted and queued for delivery
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/comment.yaml#/CreateReplyByCommentIdResponse'
+      examples:
+        default:
+          $ref: './examples.yaml#/PendingReplyAccepted'
+
+BadRequest:
+  description: Invalid request (e.g. `limit` out of range, same-post integrity violation)
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/error.yaml#/Error'
+      examples:
+        default:
+          $ref: './examples.yaml#/BadRequestError'
+
+NotFound:
+  description: Resource not found
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/error.yaml#/Error'
+      examples:
+        default:
+          $ref: './examples.yaml#/NotFoundError'
+
+ParentCommentNotFound:
+  description: Parent comment not found (must be materialized by a prior getCommentsByPostId or getRepliesByCommentId call)
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/error.yaml#/Error'
+      examples:
+        default:
+          $ref: './examples.yaml#/ParentCommentNotFoundError'
+
+ServiceUnavailable:
+  description: Queue unavailable — comment marked `FAILED` with `lastError`
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/error.yaml#/Error'
+      examples:
+        default:
+          $ref: './examples.yaml#/ServiceUnavailableError'

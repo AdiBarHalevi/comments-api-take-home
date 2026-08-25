@@ -20,7 +20,9 @@
     "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js",
     "mocks": "concurrently -k -p \"[{name}]\" -n \"Instagram,X\" -c \"magenta.bold,blue.bold\" \"npm:mock:instagram\" \"npm:mock:x\"",
     "mock:instagram": "mockoon-cli start --data mocks/mockoon/instagram.json --port 3001",
-    "mock:x": "mockoon-cli start --data mocks/mockoon/x.json --port 3002"
+    "mock:x": "mockoon-cli start --data mocks/mockoon/x.json --port 3002",
+    "openapi:lint": "redocly lint docs/openapi.yaml",
+    "openapi:bundle": "redocly bundle docs/openapi.yaml -o docs/openapi.bundled.yaml"
   },
   "keywords": [],
   "author": "",
@@ -46,6 +48,7 @@
     "prettier": "^3.9.6",
     "ts-node": "^10.4.0",
     "typescript": "~5.9.2",
-    "typescript-eslint": "^8.68.0"
+    "typescript-eslint": "^8.68.0",
+    "@redocly/cli": "^2.47.0"
   }
 }

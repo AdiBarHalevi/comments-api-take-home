@@ -1,0 +1,52 @@
+CommentStatus:
+  type: string
+  enum: [PENDING, SYNCED, FAILED]
+  description: |
+    Present only on outbound replies created by this API. `null` for materialized
+    platform comments.
+
+PendingCommentStatus:
+  type: string
+  const: PENDING
+
+NullableCommentStatus:
+  oneOf:
+    - $ref: '#/CommentStatus'
+    - type: 'null'
+  description: |
+    Present only on outbound replies created by this API. `null` for materialized
+    platform comments.
+
+Comment:
+  type: object
+  required: [id]
+  properties:
+    id:
+      $ref: 'primitives.yaml#/CommentId'
+    externalId:
+      $ref: 'primitives.yaml#/NullableString'
+      description: Platform comment id; `null` while an outbound reply is pending
+    text:
+      $ref: 'primitives.yaml#/NullableString'
+    parentId:
+      allOf:
+        - $ref: 'primitives.yaml#/NullableUuid'
+        - description: Local id of parent comment; `null` for top-level comments
+    authorUsername:
+      $ref: 'primitives.yaml#/NullableString'
+      description: Platform author handle (materialized comments from getCommentsByPostId / getRepliesByCommentId)
+    status:
+      $ref: '#/NullableCommentStatus'
+    lastError:
+      $ref: 'primitives.yaml#/NullableString'
+      description: Error detail when `status` is `FAILED`
+
+CreateReplyByCommentIdResponse:
+  description: Subset returned immediately after accepting a reply request
+  allOf:
+    - $ref: '#/Comment'
+    - type: object
+      required: [id, status, text, parentId]
+      properties:
+        status:
+          $ref: '#/PendingCommentStatus'

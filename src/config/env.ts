@@ -2,6 +2,8 @@ import 'dotenv/config'
 import { z } from 'zod'
 
 const envSchema = z.object({
+  DATABASE_URL: z.string().url(),
+
   IG_EXTERNAL_ACCOUNT_ID: z.string().min(1),
   IG_USERNAME: z.string().min(1),
   IG_ACCESS_TOKEN: z.string().min(1),

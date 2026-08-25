@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Platform {
+  INSTAGRAM @map("instagram")
+  X         @map("x")
+}
+
+enum CommentStatus {
+  PENDING @map("pending")
+  SYNCED  @map("synced")
+  FAILED  @map("failed")
+}
+
+model Post {
+  id         String    @id @default(uuid())
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  externalId String    @map("external_id")
+  platform   Platform
+  isActive   Boolean   @default(true) @map("is_active")
+  comments   Comment[]
+
+  @@unique([platform, externalId])
+  @@map("posts")
+}
+
+model Comment {
+  id               String         @id @default(uuid())
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
+  externalId       String?        @map("external_id")
+  text             String?
+  authorUsername   String?        @map("author_username")
+  authorExternalId String?        @map("author_external_id")
+  isActive         Boolean        @default(true) @map("is_active")
+  status           CommentStatus?
+  lastError        String?        @map("last_error")
+
+  postId   String   @map("post_id")
+  post     Post     @relation(fields: [postId], references: [id])
+  parentId String?  @map("parent_id")
+  parent   Comment? @relation("CommentThread", fields: [parentId], references: [id])
+  replies  Comment[] @relation("CommentThread")
+
+  @@unique([postId, externalId])
+  @@index([postId, parentId])
+  @@index([parentId])
+  @@map("comments")
+}

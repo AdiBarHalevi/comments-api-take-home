@@ -11,42 +11,39 @@ info:
   license:
     name: ISC
     url: https://opensource.org/licenses/ISC
-
 servers:
   - url: http://localhost:3000
     description: Local development (Fastify)
-
+security: []
 tags:
   - name: Comments
     description: Read and reply to comments on published posts
-
-security: []
-
 paths:
   /posts/{postId}/comments:
     get:
       operationId: getCommentsByPostId
-      tags: [Comments]
+      tags:
+        - Comments
       summary: Get comments by post id
       description: |
         Fetches comments from the post's platform, upserts them locally, and returns
         stable internal ids. Use `id` (not `externalId`) when calling reply endpoints.
       parameters:
-        - $ref: './openapi/components/parameters.yaml#/postId'
-        - $ref: './openapi/components/parameters.yaml#/cursor'
-        - $ref: './openapi/components/parameters.yaml#/limit'
+        - $ref: '#/components/parameters/postId'
+        - $ref: '#/components/parameters/cursor'
+        - $ref: '#/components/parameters/limit'
       responses:
         '200':
-          $ref: './openapi/components/responses.yaml#/GetCommentsByPostIdSuccess'
+          $ref: '#/components/responses/GetCommentsByPostIdSuccess'
         '400':
-          $ref: './openapi/components/responses.yaml#/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: './openapi/components/responses.yaml#/NotFound'
-
+          $ref: '#/components/responses/NotFound'
   /comments/{commentId}:
     get:
       operationId: getCommentById
-      tags: [Comments]
+      tags:
+        - Comments
       summary: Get comment by id
       description: |
         Returns a single comment. Used to poll outbound reply status after
@@ -55,17 +52,17 @@ paths:
         Materialized platform comments have `status` omitted or `null` and a platform
         `externalId`. Outbound replies carry `status` (`PENDING`, `SYNCED`, or `FAILED`).
       parameters:
-        - $ref: './openapi/components/parameters.yaml#/commentId'
+        - $ref: '#/components/parameters/commentId'
       responses:
         '200':
-          $ref: './openapi/components/responses.yaml#/GetCommentByIdSuccess'
+          $ref: '#/components/responses/GetCommentByIdSuccess'
         '404':
-          $ref: './openapi/components/responses.yaml#/NotFound'
-
+          $ref: '#/components/responses/NotFound'
   /comments/{commentId}/replies:
     get:
       operationId: getRepliesByCommentId
-      tags: [Comments]
+      tags:
+        - Comments
       summary: Get replies by comment id
       description: |
         Fetches replies from the platform for the given parent comment, upserts them
@@ -74,20 +71,20 @@ paths:
         Local `PENDING` outbound replies are **not** merged into this paginated response;
         poll them via `GET /comments/{commentId}` instead.
       parameters:
-        - $ref: './openapi/components/parameters.yaml#/commentId'
-        - $ref: './openapi/components/parameters.yaml#/cursor'
-        - $ref: './openapi/components/parameters.yaml#/limit'
+        - $ref: '#/components/parameters/commentId'
+        - $ref: '#/components/parameters/cursor'
+        - $ref: '#/components/parameters/limit'
       responses:
         '200':
-          $ref: './openapi/components/responses.yaml#/GetRepliesByCommentIdSuccess'
+          $ref: '#/components/responses/GetRepliesByCommentIdSuccess'
         '400':
-          $ref: './openapi/components/responses.yaml#/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: './openapi/components/responses.yaml#/NotFound'
-
+          $ref: '#/components/responses/NotFound'
     post:
       operationId: createReplyByCommentId
-      tags: [Comments]
+      tags:
+        - Comments
       summary: Reply to a comment
       description: |
         Creates an outbound reply asynchronously. The handler returns immediately with
@@ -96,15 +93,332 @@ paths:
         Poll `GET /comments/{id}` (same id returned here) until `status` is `SYNCED`
         or `FAILED`. After `SYNCED`, the reply appears in normal platform paginated GETs.
       parameters:
-        - $ref: './openapi/components/parameters.yaml#/commentId'
+        - $ref: '#/components/parameters/commentId'
       requestBody:
-        $ref: './openapi/components/requestBodies.yaml#/CreateReplyByCommentIdRequest'
+        $ref: '#/components/requestBodies/CreateReplyByCommentIdRequest'
       responses:
         '202':
-          $ref: './openapi/components/responses.yaml#/CreateReplyByCommentIdAccepted'
+          $ref: '#/components/responses/CreateReplyByCommentIdAccepted'
         '400':
-          $ref: './openapi/components/responses.yaml#/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '404':
-          $ref: './openapi/components/responses.yaml#/ParentCommentNotFound'
+          $ref: '#/components/responses/ParentCommentNotFound'
         '503':
-          $ref: './openapi/components/responses.yaml#/ServiceUnavailable'
+          $ref: '#/components/responses/ServiceUnavailable'
+components:
+  schemas:
+    Uuid:
+      type: string
+      format: uuid
+    Cursor:
+      type: string
+      description: Opaque pagination cursor from a previous response's `pagination.nextCursor`
+    Limit:
+      type: integer
+      minimum: 1
+      maximum: 100
+      default: 50
+      description: Page size
+    CommentId:
+      allOf:
+        - $ref: '#/components/schemas/Uuid'
+      description: Stable internal id — use for reply URLs and polling
+    NullableString:
+      type:
+        - string
+        - 'null'
+    NullableUuid:
+      type:
+        - string
+        - 'null'
+      format: uuid
+    CommentStatus:
+      type: string
+      enum:
+        - PENDING
+        - SYNCED
+        - FAILED
+      description: |
+        Present only on outbound replies created by this API. `null` for materialized
+        platform comments.
+    NullableCommentStatus:
+      oneOf:
+        - $ref: '#/components/schemas/CommentStatus'
+        - type: 'null'
+      description: |
+        Present only on outbound replies created by this API. `null` for materialized
+        platform comments.
+    Comment:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/CommentId'
+        externalId:
+          $ref: '#/components/schemas/NullableString'
+          description: Platform comment id; `null` while an outbound reply is pending
+        text:
+          $ref: '#/components/schemas/NullableString'
+        parentId:
+          allOf:
+            - $ref: '#/components/schemas/NullableUuid'
+            - description: Local id of parent comment; `null` for top-level comments
+        authorUsername:
+          $ref: '#/components/schemas/NullableString'
+          description: Platform author handle (materialized comments from getCommentsByPostId / getRepliesByCommentId)
+        status:
+          $ref: '#/components/schemas/NullableCommentStatus'
+        lastError:
+          $ref: '#/components/schemas/NullableString'
+          description: Error detail when `status` is `FAILED`
+    NullableCursor:
+      type:
+        - string
+        - 'null'
+      description: Pass as `cursor` on the next request; omitted or `null` when no next page
+    Pagination:
+      type: object
+      properties:
+        nextCursor:
+          $ref: '#/components/schemas/NullableCursor'
+    PaginatedCommentsResponse:
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    Error:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+    CommentText:
+      type: string
+      minLength: 1
+      description: Comment or reply body text
+    CreateReplyByCommentIdRequest:
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          $ref: '#/components/schemas/CommentText'
+    PendingCommentStatus:
+      type: string
+      const: PENDING
+    CreateReplyByCommentIdResponse:
+      description: Subset returned immediately after accepting a reply request
+      allOf:
+        - $ref: '#/components/schemas/Comment'
+        - type: object
+          required:
+            - id
+            - status
+            - text
+            - parentId
+          properties:
+            status:
+              $ref: '#/components/schemas/PendingCommentStatus'
+  parameters:
+    postId:
+      name: postId
+      in: path
+      required: true
+      description: Local post id (UUID)
+      schema:
+        $ref: '#/components/schemas/Uuid'
+    cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Opaque pagination cursor from a previous response's `pagination.nextCursor`
+      schema:
+        $ref: '#/components/schemas/Cursor'
+    limit:
+      name: limit
+      in: query
+      required: false
+      description: Page size (1–100)
+      schema:
+        $ref: '#/components/schemas/Limit'
+    commentId:
+      name: commentId
+      in: path
+      required: true
+      description: Local comment id (UUID)
+      schema:
+        $ref: '#/components/schemas/Uuid'
+  examples:
+    GetCommentsByPostIdFirstPage:
+      summary: First page of post comments
+      value:
+        data:
+          - id: 550e8400-e29b-41d4-a716-446655440000
+            externalId: '17858893269000001'
+            text: Nice post!
+            parentId: null
+            authorUsername: fan_account
+        pagination:
+          nextCursor: eyJvZmZzZXQiOjUwfQ
+    BadRequestError:
+      value:
+        statusCode: 400
+        error: Bad Request
+        message: limit must be between 1 and 100
+    NotFoundError:
+      value:
+        statusCode: 404
+        error: Not Found
+        message: Post not found
+    MaterializedComment:
+      summary: Materialized platform comment
+      value:
+        id: 550e8400-e29b-41d4-a716-446655440000
+        externalId: '17858893269000001'
+        text: Nice post!
+        parentId: null
+        authorUsername: fan_account
+        lastError: null
+    PendingReply:
+      summary: Outbound reply still pending
+      value:
+        id: 660e8400-e29b-41d4-a716-446655440001
+        status: PENDING
+        text: Thanks!
+        parentId: 550e8400-e29b-41d4-a716-446655440000
+        externalId: null
+        lastError: null
+    SyncedReply:
+      summary: Outbound reply synced to platform
+      value:
+        id: 660e8400-e29b-41d4-a716-446655440001
+        status: SYNCED
+        text: Thanks!
+        parentId: 550e8400-e29b-41d4-a716-446655440000
+        externalId: '17858893269000002'
+        lastError: null
+    FailedReply:
+      summary: Outbound reply failed
+      value:
+        id: 660e8400-e29b-41d4-a716-446655440001
+        status: FAILED
+        text: Thanks!
+        parentId: 550e8400-e29b-41d4-a716-446655440000
+        externalId: null
+        lastError: Platform rate limit exceeded
+    CreateReplyByCommentIdRequestExample:
+      value:
+        text: Thanks!
+    PendingReplyAccepted:
+      value:
+        id: 660e8400-e29b-41d4-a716-446655440001
+        status: PENDING
+        text: Thanks!
+        parentId: 550e8400-e29b-41d4-a716-446655440000
+    ParentCommentNotFoundError:
+      value:
+        statusCode: 404
+        error: Not Found
+        message: Comment not found
+    ServiceUnavailableError:
+      value:
+        statusCode: 503
+        error: Service Unavailable
+        message: Queue unavailable
+  responses:
+    GetCommentsByPostIdSuccess:
+      description: Paginated comments for the post
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedCommentsResponse'
+          examples:
+            firstPage:
+              $ref: '#/components/examples/GetCommentsByPostIdFirstPage'
+    BadRequest:
+      description: Invalid request (e.g. `limit` out of range, same-post integrity violation)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            default:
+              $ref: '#/components/examples/BadRequestError'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            default:
+              $ref: '#/components/examples/NotFoundError'
+    GetCommentByIdSuccess:
+      description: Comment found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Comment'
+          examples:
+            materialized:
+              $ref: '#/components/examples/MaterializedComment'
+            pendingReply:
+              $ref: '#/components/examples/PendingReply'
+            syncedReply:
+              $ref: '#/components/examples/SyncedReply'
+            failedReply:
+              $ref: '#/components/examples/FailedReply'
+    GetRepliesByCommentIdSuccess:
+      description: Paginated replies for the comment
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedCommentsResponse'
+    CreateReplyByCommentIdAccepted:
+      description: Reply accepted and queued for delivery
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateReplyByCommentIdResponse'
+          examples:
+            default:
+              $ref: '#/components/examples/PendingReplyAccepted'
+    ParentCommentNotFound:
+      description: Parent comment not found (must be materialized by a prior getCommentsByPostId or getRepliesByCommentId call)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            default:
+              $ref: '#/components/examples/ParentCommentNotFoundError'
+    ServiceUnavailable:
+      description: Queue unavailable — comment marked `FAILED` with `lastError`
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            default:
+              $ref: '#/components/examples/ServiceUnavailableError'
+  requestBodies:
+    CreateReplyByCommentIdRequest:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateReplyByCommentIdRequest'
+          examples:
+            default:
+              $ref: '#/components/examples/CreateReplyByCommentIdRequestExample'

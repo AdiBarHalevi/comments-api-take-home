@@ -23,9 +23,7 @@
     "mock:x": "mockoon-cli start --data mocks/mockoon/x.json --port 3002",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "bootstrap": "docker compose up -d --wait",
-    "openapi:lint": "redocly lint docs/openapi.yaml",
-    "openapi:bundle": "redocly bundle docs/openapi.yaml -o docs/openapi.bundled.yaml"
+    "bootstrap": "docker compose up -d --wait"
   },
   "keywords": [],
   "author": "",
@@ -44,7 +42,6 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@mockoon/cli": "^9.8.0",
-    "@redocly/cli": "^2.47.0",
     "@types/node": "^25.9.5",
     "c8": "^11.0.0",
     "concurrently": "^9.0.0",

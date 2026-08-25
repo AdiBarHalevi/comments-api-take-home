@@ -1,9 +1,0 @@
-CreateReplyByCommentIdRequest:
-  required: true
-  content:
-    application/json:
-      schema:
-        $ref: './schemas/operations.yaml#/CreateReplyByCommentIdRequest'
-      examples:
-        default:
-          $ref: './examples.yaml#/CreateReplyByCommentIdRequestExample'

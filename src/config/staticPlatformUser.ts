@@ -19,13 +19,15 @@ export type StaticPlatformUser = {
 
 export type PlatformKey = 'instagram' | 'x'
 
-export function getStaticPlatformUser(platform: PlatformKey): StaticPlatformUser {
+export function getStaticPlatformUser(
+  platform: PlatformKey
+): StaticPlatformUser {
   if (platform === 'instagram') {
     return {
       externalAccountId: env.IG_EXTERNAL_ACCOUNT_ID,
       username: env.IG_USERNAME,
       accessToken: env.IG_ACCESS_TOKEN,
-      apiBaseUrl: env.IG_API_BASE_URL,
+      apiBaseUrl: env.IG_API_BASE_URL
     }
   }
 
@@ -33,13 +35,16 @@ export function getStaticPlatformUser(platform: PlatformKey): StaticPlatformUser
     externalAccountId: env.X_EXTERNAL_ACCOUNT_ID,
     username: env.X_USERNAME,
     accessToken: env.X_ACCESS_TOKEN,
-    apiBaseUrl: env.X_API_BASE_URL,
+    apiBaseUrl: env.X_API_BASE_URL
   }
 }
 
-export function getStaticPlatformUsers(): Record<PlatformKey, StaticPlatformUser> {
+export function getStaticPlatformUsers(): Record<
+  PlatformKey,
+  StaticPlatformUser
+> {
   return {
     instagram: getStaticPlatformUser('instagram'),
-    x: getStaticPlatformUser('x'),
+    x: getStaticPlatformUser('x')
   }
 }

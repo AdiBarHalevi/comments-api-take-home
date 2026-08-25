@@ -224,13 +224,26 @@ interface Page<T> {
 
 interface PlatformClient {
   listPosts(accountId: string): Promise<PlatformPost[]>
-  listComments(externalPostId: string, cursor?: string): Promise<Page<PlatformComment>>
-  listReplies(externalCommentId: string, cursor?: string): Promise<Page<PlatformComment>>
-  createReply(externalCommentId: string, text: string): Promise<{ externalId: string }>
+  listComments(
+    externalPostId: string,
+    cursor?: string
+  ): Promise<Page<PlatformComment>>
+  listReplies(
+    externalCommentId: string,
+    cursor?: string
+  ): Promise<Page<PlatformComment>>
+  createReply(
+    externalCommentId: string,
+    text: string
+  ): Promise<{ externalId: string }>
 }
 
-class InstagramClient implements PlatformClient { /* maps createReply → IG Graph comment reply API */ }
-class XClient implements PlatformClient { /* maps createReply → X POST /2/tweets reply payload */ }
+class InstagramClient implements PlatformClient {
+  /* maps createReply → IG Graph comment reply API */
+}
+class XClient implements PlatformClient {
+  /* maps createReply → X POST /2/tweets reply payload */
+}
 
 class PlatformClientRegistry {
   constructor(private readonly clients: Record<Platform, PlatformClient>) {}
@@ -245,7 +258,7 @@ class PlatformClientRegistry {
 // wired once at startup; injected into services for testability
 const platformClientRegistry = new PlatformClientRegistry({
   INSTAGRAM: new InstagramClient(),
-  X: new XClient(),
+  X: new XClient()
 })
 ```
 
@@ -306,11 +319,11 @@ try {
 
 ## Consistency model (v1)
 
-| Path | Behavior |
-|------|----------|
+| Path                        | Behavior                                                                                                                                    |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Read** comments / replies | Fetch from platform → **upsert materialize** → return local ids. We do not pre-sync the full thread; only what each page returns is stored. |
-| **Create reply** | Load materialized parent → insert outbound `Comment` (`PENDING`) → queue → platform → `SYNCED` / `FAILED`. Poll via `GET /comments/:id`. |
-| **Post mapping** | `Post` rows link our API ids to platform post ids. |
+| **Create reply**            | Load materialized parent → insert outbound `Comment` (`PENDING`) → queue → platform → `SYNCED` / `FAILED`. Poll via `GET /comments/:id`.    |
+| **Post mapping**            | `Post` rows link our API ids to platform post ids.                                                                                          |
 
 **What we store locally and why:**
 

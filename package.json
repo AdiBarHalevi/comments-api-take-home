@@ -7,6 +7,10 @@
     "test": "test"
   },
   "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "npm run build:ts && tsc -p test/tsconfig.json && c8 node --test -r ts-node/register \"test/**/*.ts\"",
     "start": "npm run build:ts && fastify start -l info dist/app.js",
     "build:ts": "tsc",
@@ -31,12 +35,17 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@mockoon/cli": "^9.8.0",
     "@types/node": "^25.9.5",
     "c8": "^11.0.0",
     "concurrently": "^9.0.0",
+    "eslint": "^10.9.1",
+    "eslint-config-prettier": "^10.1.8",
     "fastify-tsconfig": "^3.0.0",
+    "prettier": "^3.9.6",
     "ts-node": "^10.4.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.68.0"
   }
 }

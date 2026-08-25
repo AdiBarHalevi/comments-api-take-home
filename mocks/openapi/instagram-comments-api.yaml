@@ -1,7 +1,8 @@
 openapi: 3.0.3
 info:
   title: Instagram Graph Comments API (original, comments-scoped)
-  description: 'Based on community Instagram Graph OpenAPI (api-evangelist comments + media). Includes list user media, get
+  description:
+    'Based on community Instagram Graph OpenAPI (api-evangelist comments + media). Includes list user media, get
     media, comments, and replies.
 
 
@@ -20,15 +21,15 @@ info:
     name: Meta Platform Terms
     url: https://developers.facebook.com/terms
 servers:
-- url: https://graph.facebook.com/v21.0
-  description: Facebook Graph API (Facebook Login)
-- url: https://graph.instagram.com/v21.0
-  description: Instagram Graph API (Instagram Login)
+  - url: https://graph.facebook.com/v21.0
+    description: Facebook Graph API (Facebook Login)
+  - url: https://graph.instagram.com/v21.0
+    description: Instagram Graph API (Instagram Login)
 tags:
-- name: Comments
-  description: Comment management and moderation
-- name: Media
-  description: Photos, videos, stories, reels, and carousels
+  - name: Comments
+    description: Comment management and moderation
+  - name: Media
+    description: Photos, videos, stories, reels, and carousels
 paths:
   /{media_id}/comments:
     get:
@@ -36,23 +37,23 @@ paths:
       summary: Instagram Get Media Comments
       description: Get comments on an Instagram media object.
       tags:
-      - Comments
+        - Comments
       parameters:
-      - name: media_id
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: fields
-        in: query
-        schema:
-          type: string
-        example: id,text,username,timestamp,like_count
-      - name: access_token
-        in: query
-        required: true
-        schema:
-          type: string
+        - name: media_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          schema:
+            type: string
+          example: id,text,username,timestamp,like_count
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: List of comments.
@@ -68,13 +69,13 @@ paths:
       summary: Instagram Create Comment
       description: Create a comment on an Instagram media object.
       tags:
-      - Comments
+        - Comments
       parameters:
-      - name: media_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: media_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -82,8 +83,8 @@ paths:
             schema:
               type: object
               required:
-              - message
-              - access_token
+                - message
+                - access_token
               properties:
                 message:
                   type: string
@@ -111,23 +112,23 @@ paths:
       summary: Instagram Get Comment
       description: Get fields on an Instagram comment.
       tags:
-      - Comments
+        - Comments
       parameters:
-      - name: comment_id
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: fields
-        in: query
-        schema:
-          type: string
-        example: id,text,username,timestamp,like_count,hidden
-      - name: access_token
-        in: query
-        required: true
-        schema:
-          type: string
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          schema:
+            type: string
+          example: id,text,username,timestamp,like_count,hidden
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Comment data.
@@ -143,21 +144,21 @@ paths:
       summary: Instagram Hide or Unhide Comment
       description: Hide or unhide a comment on your media.
       tags:
-      - Comments
+        - Comments
       parameters:
-      - name: comment_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:
             schema:
               type: object
               required:
-              - hide
-              - access_token
+                - hide
+                - access_token
               properties:
                 hide:
                   type: boolean
@@ -180,18 +181,18 @@ paths:
       summary: Instagram Delete Comment
       description: Delete a comment on your media.
       tags:
-      - Comments
+        - Comments
       parameters:
-      - name: comment_id
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: access_token
-        in: query
-        required: true
-        schema:
-          type: string
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Comment deleted.
@@ -208,22 +209,22 @@ paths:
       summary: Instagram Get Comment Replies
       description: Get replies to a comment.
       tags:
-      - Comments
+        - Comments
       parameters:
-      - name: comment_id
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: fields
-        in: query
-        schema:
-          type: string
-      - name: access_token
-        in: query
-        required: true
-        schema:
-          type: string
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: fields
+          in: query
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: List of reply comments.
@@ -239,13 +240,13 @@ paths:
       summary: Instagram Create Comment Reply
       description: Reply to a comment.
       tags:
-      - Comments
+        - Comments
       parameters:
-      - name: comment_id
-        in: path
-        required: true
-        schema:
-          type: string
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -253,8 +254,8 @@ paths:
             schema:
               type: object
               required:
-              - message
-              - access_token
+                - message
+                - access_token
               properties:
                 message:
                   type: string
@@ -281,10 +282,10 @@ paths:
       description: Returns information about a specific media object
       operationId: getMediaById
       tags:
-      - Media
+        - Media
       parameters:
-      - $ref: '#/components/parameters/media_id'
-      - $ref: '#/components/parameters/fields_media'
+        - $ref: '#/components/parameters/media_id'
+        - $ref: '#/components/parameters/fields_media'
       responses:
         '200':
           description: Media information
@@ -298,36 +299,36 @@ paths:
       summary: Instagram Get User Media
       description: Get a collection of IG Media objects published on the account.
       tags:
-      - Media
+        - Media
       parameters:
-      - name: user_id
-        in: path
-        required: true
-        description: The Instagram user ID.
-        schema:
-          type: string
-      - name: fields
-        in: query
-        description: Comma-separated list of fields.
-        schema:
-          type: string
-        example: id,caption,media_type,media_url,timestamp,permalink
-      - name: limit
-        in: query
-        description: Maximum number of results per page.
-        schema:
-          type: integer
-        example: 25
-      - name: after
-        in: query
-        description: Cursor for pagination.
-        schema:
-          type: string
-      - name: access_token
-        in: query
-        required: true
-        schema:
-          type: string
+        - name: user_id
+          in: path
+          required: true
+          description: The Instagram user ID.
+          schema:
+            type: string
+        - name: fields
+          in: query
+          description: Comma-separated list of fields.
+          schema:
+            type: string
+          example: id,caption,media_type,media_url,timestamp,permalink
+        - name: limit
+          in: query
+          description: Maximum number of results per page.
+          schema:
+            type: integer
+          example: 25
+        - name: after
+          in: query
+          description: Cursor for pagination.
+          schema:
+            type: string
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: List of media objects.
@@ -407,9 +408,9 @@ components:
         media_type:
           type: string
           enum:
-          - IMAGE
-          - VIDEO
-          - CAROUSEL_ALBUM
+            - IMAGE
+            - VIDEO
+            - CAROUSEL_ALBUM
         media_url:
           type: string
           description: Media URL
@@ -457,9 +458,9 @@ components:
         account_type:
           type: string
           enum:
-          - BUSINESS
-          - PERSONAL
-          - CREATOR
+            - BUSINESS
+            - PERSONAL
+            - CREATOR
         media_count:
           type: integer
           description: Number of media published by user
@@ -525,4 +526,3 @@ components:
 externalDocs:
   description: Instagram Platform Documentation
   url: https://developers.facebook.com/docs/instagram-platform
-

@@ -10,7 +10,7 @@ const envSchema = z.object({
   X_EXTERNAL_ACCOUNT_ID: z.string().min(1),
   X_USERNAME: z.string().min(1),
   X_ACCESS_TOKEN: z.string().min(1),
-  X_API_BASE_URL: z.string().url(),
+  X_API_BASE_URL: z.string().url()
 })
 
 export type Env = z.infer<typeof envSchema>

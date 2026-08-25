@@ -7,17 +7,17 @@ Design and partially implement a comment system.
 
 Requirements:
 
-* Retrieve comments for a published post
-* Reply to a comment
-* Support multiple social platforms
-* Expose the functionality through a REST API
+- Retrieve comments for a published post
+- Reply to a comment
+- Support multiple social platforms
+- Expose the functionality through a REST API
 
 Please provide:
 
-* Database schema
-* API design
-* Relevant TypeScript code
-* Explanation of major design decisions
+- Database schema
+- API design
+- Relevant TypeScript code
+- Explanation of major design decisions
 
 The system currently supports multiple social platforms and is
 expected to support more in the future.

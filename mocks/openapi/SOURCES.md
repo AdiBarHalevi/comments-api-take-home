@@ -1,6 +1,7 @@
 # OpenAPI sources
 
 ## X
+
 - **Original:** `GET https://api.x.com/2/openapi.json` (official, OpenAPI 3, ~150 paths)
 - **Trimmed artifacts:** `x-comments-api.yaml`, `x-comments-api.json`
 - **Kept paths (original operation objects):**
@@ -12,6 +13,7 @@
 - Components are copied from the official file and pruned to `$ref`s reachable from those paths.
 
 ## Instagram
+
 - **Original comments:** https://github.com/api-evangelist/instagram/blob/main/openapi/instagram-comments-api-openapi.yml
 - **Original media (list posts):** https://github.com/api-evangelist/instagram/blob/main/openapi/instagram-media-api-openapi.yml
   (Meta does not publish an official OpenAPI; these are community Graph mirrors.)

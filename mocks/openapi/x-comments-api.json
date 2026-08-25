@@ -43,10 +43,7 @@
       "get": {
         "security": [
           {
-            "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
-            ]
+            "OAuth2UserToken": ["tweet.read", "users.read"]
           },
           {
             "UserToken": []
@@ -55,9 +52,7 @@
             "BearerToken": []
           }
         ],
-        "tags": [
-          "Posts"
-        ],
+        "tags": ["Posts"],
         "summary": "Get Posts by IDs",
         "operationId": "getPostsByIds",
         "parameters": [
@@ -126,19 +121,13 @@
       "post": {
         "security": [
           {
-            "OAuth2UserToken": [
-              "tweet.read",
-              "users.read",
-              "tweet.write"
-            ]
+            "OAuth2UserToken": ["tweet.read", "users.read", "tweet.write"]
           },
           {
             "UserToken": []
           }
         ],
-        "tags": [
-          "Posts"
-        ],
+        "tags": ["Posts"],
         "summary": "Create Posts",
         "operationId": "createPosts",
         "requestBody": {
@@ -194,9 +183,7 @@
             "UserToken": []
           }
         ],
-        "tags": [
-          "Posts"
-        ],
+        "tags": ["Posts"],
         "summary": "Hide reply",
         "description": "Hides or unhides a reply to a conversation owned by the authenticated user.",
         "externalDocs": {
@@ -257,19 +244,13 @@
       "delete": {
         "security": [
           {
-            "OAuth2UserToken": [
-              "tweet.read",
-              "users.read",
-              "tweet.write"
-            ]
+            "OAuth2UserToken": ["tweet.read", "users.read", "tweet.write"]
           },
           {
             "UserToken": []
           }
         ],
-        "tags": [
-          "Posts"
-        ],
+        "tags": ["Posts"],
         "summary": "Delete Posts",
         "operationId": "deletePosts",
         "parameters": [
@@ -314,10 +295,7 @@
       "get": {
         "security": [
           {
-            "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
-            ]
+            "OAuth2UserToken": ["users.read", "tweet.read"]
           },
           {
             "UserToken": []
@@ -326,9 +304,7 @@
             "BearerToken": []
           }
         ],
-        "tags": [
-          "Posts"
-        ],
+        "tags": ["Posts"],
         "summary": "Get Posts by ID",
         "operationId": "getPostsById",
         "parameters": [
@@ -393,10 +369,7 @@
       "get": {
         "security": [
           {
-            "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
-            ]
+            "OAuth2UserToken": ["tweet.read", "users.read"]
           },
           {
             "UserToken": []
@@ -405,9 +378,7 @@
             "BearerToken": []
           }
         ],
-        "tags": [
-          "Posts"
-        ],
+        "tags": ["Posts"],
         "summary": "Search Posts Recent",
         "description": "At most one of `start_time`, `since_id` may be provided. At most one of `end_time`, `until_id` may be provided. At most one of `pagination_token`, `next_token` may be provided.",
         "operationId": "searchPostsRecent",
@@ -505,10 +476,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "recency",
-                "relevancy"
-              ]
+              "enum": ["recency", "relevancy"]
             },
             "style": "form"
           },
@@ -564,10 +532,7 @@
       "get": {
         "security": [
           {
-            "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
-            ]
+            "OAuth2UserToken": ["tweet.read", "users.read"]
           },
           {
             "UserToken": []
@@ -576,9 +541,7 @@
             "BearerToken": []
           }
         ],
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get Users Posts",
         "description": "When both are provided, `start_time` must be earlier than `end_time`. When both are provided, `since_id` must be less than `until_id`.",
         "operationId": "getUsersPosts",
@@ -667,10 +630,7 @@
               "uniqueItems": true,
               "items": {
                 "type": "string",
-                "enum": [
-                  "replies",
-                  "retweets"
-                ]
+                "enum": ["replies", "retweets"]
               }
             },
             "explode": false,
@@ -787,12 +747,7 @@
           "reply_settings": {
             "type": "string",
             "description": "Who can reply to this tweet.",
-            "enum": [
-              "following",
-              "mentionedUsers",
-              "subscribers",
-              "verified"
-            ]
+            "enum": ["following", "mentionedUsers", "subscribers", "verified"]
           },
           "share_with_followers": {
             "type": "boolean",
@@ -898,9 +853,7 @@
       },
       "CreatePostsReply": {
         "type": "object",
-        "required": [
-          "in_reply_to_tweet_id"
-        ],
+        "required": ["in_reply_to_tweet_id"],
         "properties": {
           "auto_populate_reply_metadata": {
             "type": "boolean",
@@ -923,10 +876,7 @@
       },
       "Error": {
         "type": "object",
-        "required": [
-          "code",
-          "message"
-        ],
+        "required": ["code", "message"],
         "properties": {
           "code": {
             "type": "integer",
@@ -953,10 +903,7 @@
       },
       "CreatePostsPoll": {
         "type": "object",
-        "required": [
-          "options",
-          "duration_minutes"
-        ],
+        "required": ["options", "duration_minutes"],
         "properties": {
           "duration_minutes": {
             "type": "integer",
@@ -978,12 +925,7 @@
           "reply_settings": {
             "type": "string",
             "description": "Who can reply to the poll Tweet. Accepted for compatibility; it carries no backend argument and is dropped before the mutation is issued (see `translate_body`).",
-            "enum": [
-              "following",
-              "mentionedUsers",
-              "subscribers",
-              "verified"
-            ]
+            "enum": ["following", "mentionedUsers", "subscribers", "verified"]
           }
         },
         "additionalProperties": false
@@ -1061,9 +1003,7 @@
       },
       "HidePostsReplyRequest": {
         "type": "object",
-        "required": [
-          "hidden"
-        ],
+        "required": ["hidden"],
         "properties": {
           "hidden": {
             "type": "boolean",
@@ -1209,9 +1149,7 @@
       "PostNotePost": {
         "type": "object",
         "description": "The full content of the Post, including text beyond 280 characters.",
-        "required": [
-          "text"
-        ],
+        "required": ["text"],
         "properties": {
           "entities": {
             "type": "object",
@@ -1222,11 +1160,7 @@
                 "items": {
                   "type": "object",
                   "description": "A hashtag or cashtag entity.",
-                  "required": [
-                    "start",
-                    "end",
-                    "tag"
-                  ],
+                  "required": ["start", "end", "tag"],
                   "properties": {
                     "end": {
                       "type": "integer",
@@ -1250,11 +1184,7 @@
                 "items": {
                   "type": "object",
                   "description": "A hashtag or cashtag entity.",
-                  "required": [
-                    "start",
-                    "end",
-                    "tag"
-                  ],
+                  "required": ["start", "end", "tag"],
                   "properties": {
                     "end": {
                       "type": "integer",
@@ -1278,10 +1208,7 @@
                 "items": {
                   "type": "object",
                   "description": "A user mention entity.",
-                  "required": [
-                    "start",
-                    "end"
-                  ],
+                  "required": ["start", "end"],
                   "properties": {
                     "end": {
                       "type": "integer",
@@ -1308,10 +1235,7 @@
                 "items": {
                   "type": "object",
                   "description": "A URL entity found in note Post text.",
-                  "required": [
-                    "start",
-                    "end"
-                  ],
+                  "required": ["start", "end"],
                   "properties": {
                     "display_url": {
                       "type": "string",
@@ -1378,11 +1302,7 @@
       },
       "DisallowedResourceProblem": {
         "type": "object",
-        "required": [
-          "type",
-          "title",
-          "detail"
-        ],
+        "required": ["type", "title", "detail"],
         "properties": {
           "detail": {
             "type": "string"
@@ -1404,17 +1324,13 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "https://api.x.com/2/problems/disallowed-resource"
-            ]
+            "enum": ["https://api.x.com/2/problems/disallowed-resource"]
           }
         }
       },
       "CreatePostsEditOptions": {
         "type": "object",
-        "required": [
-          "previous_post_id"
-        ],
+        "required": ["previous_post_id"],
         "properties": {
           "previous_post_id": {
             "type": "string",
@@ -1495,12 +1411,7 @@
       },
       "NotAuthorizedForFieldProblem": {
         "type": "object",
-        "required": [
-          "type",
-          "title",
-          "detail",
-          "field"
-        ],
+        "required": ["type", "title", "detail", "field"],
         "properties": {
           "detail": {
             "type": "string"
@@ -1528,9 +1439,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "https://api.x.com/2/problems/not-authorized-for-field"
-            ]
+            "enum": ["https://api.x.com/2/problems/not-authorized-for-field"]
           },
           "value": {
             "type": "string"
@@ -1540,10 +1449,7 @@
       "PostWithheld": {
         "type": "object",
         "description": "Withholding details for withheld content.",
-        "required": [
-          "copyright",
-          "country_codes"
-        ],
+        "required": ["copyright", "country_codes"],
         "properties": {
           "copyright": {
             "type": "boolean",
@@ -1559,22 +1465,14 @@
           "scope": {
             "type": "string",
             "description": "Whether the withholding applies to a Post or a User.",
-            "enum": [
-              "post",
-              "user"
-            ],
+            "enum": ["post", "user"],
             "nullable": true
           }
         }
       },
       "ResourceUnavailableProblem": {
         "type": "object",
-        "required": [
-          "type",
-          "title",
-          "detail",
-          "resource_type"
-        ],
+        "required": ["type", "title", "detail", "resource_type"],
         "properties": {
           "detail": {
             "type": "string"
@@ -1593,9 +1491,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "https://api.x.com/2/problems/resource-unavailable"
-            ]
+            "enum": ["https://api.x.com/2/problems/resource-unavailable"]
           }
         }
       },
@@ -1666,12 +1562,7 @@
       },
       "FieldHydrationFailureProblem": {
         "type": "object",
-        "required": [
-          "type",
-          "title",
-          "detail",
-          "field"
-        ],
+        "required": ["type", "title", "detail", "field"],
         "properties": {
           "detail": {
             "type": "string"
@@ -1693,9 +1584,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "https://api.x.com/2/problems/field-hydration-failure"
-            ]
+            "enum": ["https://api.x.com/2/problems/field-hydration-failure"]
           }
         }
       },
@@ -1708,11 +1597,7 @@
             "items": {
               "type": "object",
               "description": "A hashtag or cashtag entity.",
-              "required": [
-                "start",
-                "end",
-                "tag"
-              ],
+              "required": ["start", "end", "tag"],
               "properties": {
                 "end": {
                   "type": "integer",
@@ -1736,11 +1621,7 @@
             "items": {
               "type": "object",
               "description": "A hashtag or cashtag entity.",
-              "required": [
-                "start",
-                "end",
-                "tag"
-              ],
+              "required": ["start", "end", "tag"],
               "properties": {
                 "end": {
                   "type": "integer",
@@ -1764,10 +1645,7 @@
             "items": {
               "type": "object",
               "description": "A user mention entity.",
-              "required": [
-                "start",
-                "end"
-              ],
+              "required": ["start", "end"],
               "properties": {
                 "end": {
                   "type": "integer",
@@ -1794,10 +1672,7 @@
             "items": {
               "type": "object",
               "description": "A URL entity found in the Post text, enriched with link metadata.",
-              "required": [
-                "start",
-                "end"
-              ],
+              "required": ["start", "end"],
               "properties": {
                 "description": {
                   "type": "string",
@@ -1880,9 +1755,7 @@
       "PostScopes": {
         "type": "object",
         "description": "The scopes for this Post.",
-        "required": [
-          "followers"
-        ],
+        "required": ["followers"],
         "properties": {
           "followers": {
             "type": "boolean",
@@ -1896,10 +1769,7 @@
         "items": {
           "type": "object",
           "description": "A reference from this Post to another Post (repost, quote, or reply).",
-          "required": [
-            "type",
-            "id"
-          ],
+          "required": ["type", "id"],
           "properties": {
             "id": {
               "type": "string",
@@ -1911,11 +1781,7 @@
                 {
                   "type": "string",
                   "description": "The kind of Post-to-Post reference.",
-                  "enum": [
-                    "retweeted",
-                    "quoted",
-                    "replied_to"
-                  ]
+                  "enum": ["retweeted", "quoted", "replied_to"]
                 }
               ]
             }
@@ -1924,12 +1790,7 @@
       },
       "NotAuthorizedForResourceProblem": {
         "type": "object",
-        "required": [
-          "type",
-          "title",
-          "detail",
-          "resource_type"
-        ],
+        "required": ["type", "title", "detail", "resource_type"],
         "properties": {
           "detail": {
             "type": "string"
@@ -1954,9 +1815,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "https://api.x.com/2/problems/not-authorized-for-resource"
-            ]
+            "enum": ["https://api.x.com/2/problems/not-authorized-for-resource"]
           },
           "value": {
             "type": "string"
@@ -1965,11 +1824,7 @@
       },
       "InternalErrorProblem": {
         "type": "object",
-        "required": [
-          "type",
-          "title",
-          "detail"
-        ],
+        "required": ["type", "title", "detail"],
         "properties": {
           "detail": {
             "type": "string"
@@ -1982,9 +1837,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "https://api.x.com/2/problems/internal-error"
-            ]
+            "enum": ["https://api.x.com/2/problems/internal-error"]
           }
         }
       },
@@ -2069,11 +1922,7 @@
       },
       "InvalidRequestProblem": {
         "type": "object",
-        "required": [
-          "type",
-          "title",
-          "detail"
-        ],
+        "required": ["type", "title", "detail"],
         "properties": {
           "detail": {
             "type": "string"
@@ -2089,9 +1938,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "https://api.x.com/2/problems/invalid-request"
-            ]
+            "enum": ["https://api.x.com/2/problems/invalid-request"]
           },
           "value": {
             "type": "string"
@@ -2100,12 +1947,7 @@
       },
       "FieldUnauthorizedProblem": {
         "type": "object",
-        "required": [
-          "type",
-          "title",
-          "detail",
-          "field"
-        ],
+        "required": ["type", "title", "detail", "field"],
         "properties": {
           "detail": {
             "type": "string"
@@ -2127,17 +1969,13 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "https://api.x.com/2/problems/field-unauthorized"
-            ]
+            "enum": ["https://api.x.com/2/problems/field-unauthorized"]
           }
         }
       },
       "CreatePostsGeo": {
         "type": "object",
-        "required": [
-          "place_id"
-        ],
+        "required": ["place_id"],
         "properties": {
           "place_id": {
             "type": "string",
@@ -2224,9 +2062,7 @@
       },
       "CreatePostsMedia": {
         "type": "object",
-        "required": [
-          "media_ids"
-        ],
+        "required": ["media_ids"],
         "properties": {
           "call_to_actions": {
             "description": "Call-to-action button rendered on the media entity.",
@@ -2384,12 +2220,7 @@
       },
       "ResourceNotFoundProblem": {
         "type": "object",
-        "required": [
-          "type",
-          "title",
-          "detail",
-          "resource_type"
-        ],
+        "required": ["type", "title", "detail", "resource_type"],
         "properties": {
           "detail": {
             "type": "string"
@@ -2411,9 +2242,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "https://api.x.com/2/problems/resource-not-found"
-            ]
+            "enum": ["https://api.x.com/2/problems/resource-not-found"]
           },
           "value": {
             "type": "string"
@@ -2426,10 +2255,7 @@
         "items": {
           "type": "object",
           "description": "A single inferred annotation about the Post (domain and entity context).",
-          "required": [
-            "domain",
-            "entity"
-          ],
+          "required": ["domain", "entity"],
           "properties": {
             "domain": {
               "description": "The domain (broad category) this annotation belongs to.",
@@ -2482,10 +2308,7 @@
       },
       "CreatePostsResponseData": {
         "type": "object",
-        "required": [
-          "id",
-          "text"
-        ],
+        "required": ["id", "text"],
         "properties": {
           "edit_history_post_ids": {
             "type": "array",
@@ -2511,11 +2334,7 @@
         "items": {
           "type": "object",
           "description": "A single option (choice) available in a poll.",
-          "required": [
-            "position",
-            "label",
-            "votes"
-          ],
+          "required": ["position", "label", "votes"],
           "properties": {
             "label": {
               "type": "string",
@@ -2541,10 +2360,7 @@
           "coordinates": {
             "type": "object",
             "description": "A GeoJSON Point geometry.",
-            "required": [
-              "type",
-              "coordinates"
-            ],
+            "required": ["type", "coordinates"],
             "properties": {
               "coordinates": {
                 "type": "array",
@@ -2559,9 +2375,7 @@
               "type": {
                 "type": "string",
                 "description": "The GeoJSON geometry type.",
-                "enum": [
-                  "Point"
-                ]
+                "enum": ["Point"]
               }
             },
             "nullable": true
@@ -2575,9 +2389,7 @@
       },
       "DeletePostsResponseData": {
         "type": "object",
-        "required": [
-          "deleted"
-        ],
+        "required": ["deleted"],
         "properties": {
           "deleted": {
             "type": "boolean",
@@ -2588,11 +2400,7 @@
       "PlaceGeo": {
         "type": "object",
         "description": "The geographic location of this place, expressed as a GeoJSON Feature.",
-        "required": [
-          "type",
-          "bbox",
-          "properties"
-        ],
+        "required": ["type", "bbox", "properties"],
         "properties": {
           "bbox": {
             "type": "array",
@@ -2613,9 +2421,7 @@
             "oneOf": [
               {
                 "type": "string",
-                "enum": [
-                  "Feature"
-                ]
+                "enum": ["Feature"]
               }
             ]
           }
@@ -2779,11 +2585,7 @@
                 "items": {
                   "type": "object",
                   "description": "A hashtag or cashtag entity.",
-                  "required": [
-                    "start",
-                    "end",
-                    "tag"
-                  ],
+                  "required": ["start", "end", "tag"],
                   "properties": {
                     "end": {
                       "type": "integer",
@@ -2807,11 +2609,7 @@
                 "items": {
                   "type": "object",
                   "description": "A hashtag or cashtag entity.",
-                  "required": [
-                    "start",
-                    "end",
-                    "tag"
-                  ],
+                  "required": ["start", "end", "tag"],
                   "properties": {
                     "end": {
                       "type": "integer",
@@ -2835,11 +2633,7 @@
                 "items": {
                   "type": "object",
                   "description": "A user mention entity.",
-                  "required": [
-                    "start",
-                    "end",
-                    "username"
-                  ],
+                  "required": ["start", "end", "username"],
                   "properties": {
                     "end": {
                       "type": "integer",
@@ -2865,11 +2659,7 @@
                 "items": {
                   "type": "object",
                   "description": "A URL entity found in profile text.",
-                  "required": [
-                    "start",
-                    "end",
-                    "url"
-                  ],
+                  "required": ["start", "end", "url"],
                   "properties": {
                     "description": {
                       "type": "string",
@@ -2958,11 +2748,7 @@
                 "items": {
                   "type": "object",
                   "description": "A URL entity found in profile text.",
-                  "required": [
-                    "start",
-                    "end",
-                    "url"
-                  ],
+                  "required": ["start", "end", "url"],
                   "properties": {
                     "description": {
                       "type": "string",
@@ -3047,9 +2833,7 @@
       "MediaPublicMetrics": {
         "type": "object",
         "description": "Public engagement metrics for the media at the time of the request.",
-        "required": [
-          "view_count"
-        ],
+        "required": ["view_count"],
         "properties": {
           "view_count": {
             "type": "integer",
@@ -3136,9 +2920,7 @@
       },
       "CreatePostsMediaCallToActionsWatchNow": {
         "type": "object",
-        "required": [
-          "url"
-        ],
+        "required": ["url"],
         "properties": {
           "url": {
             "type": "string",
@@ -3150,9 +2932,7 @@
       "UserSubscription": {
         "type": "object",
         "description": "The subscription relationship between this User and you.",
-        "required": [
-          "subscribes_to_you"
-        ],
+        "required": ["subscribes_to_you"],
         "properties": {
           "subscribes_to_you": {
             "type": "boolean",
@@ -3175,9 +2955,7 @@
           "scope": {
             "type": "string",
             "description": "The scope of the withholding. Only present, with the value \"user\", when the entire User is withheld.",
-            "enum": [
-              "user"
-            ],
+            "enum": ["user"],
             "nullable": true
           }
         }
@@ -3255,9 +3033,7 @@
       },
       "CreatePostsMediaCallToActionsVisitSite": {
         "type": "object",
-        "required": [
-          "url"
-        ],
+        "required": ["url"],
         "properties": {
           "url": {
             "type": "string",

@@ -1,11 +1,12 @@
 openapi: 3.0.0
 info:
-  description: 'Trimmed from the official X API v2 OpenAPI (https://api.x.com/2/openapi.json). Keeps paths for listing a user''s
+  description:
+    "Trimmed from the official X API v2 OpenAPI (https://api.x.com/2/openapi.json). Keeps paths for listing a user's
     posts, listing conversation replies, creating replies, fetching a post, and hiding a reply. Component schemas are original
     definitions pruned to refs in use.
 
 
-    X API v2 core endpoints'
+    X API v2 core endpoints"
   version: '2.167'
   title: X API v2 — Comments / Replies (trimmed)
   termsOfService: https://developer.x.com/en/developer-terms/agreement-and-policy.html
@@ -16,50 +17,50 @@ info:
     name: X Developer Agreement and Policy
     url: https://developer.x.com/en/developer-terms/agreement-and-policy.html
 servers:
-- description: X API
-  url: https://api.x.com
+  - description: X API
+    url: https://api.x.com
 tags:
-- name: Posts
-  description: Endpoints related to retrieving, searching, and modifying Posts
-  externalDocs:
-    description: Find out more
-    url: https://docs.x.com/x-api/posts/introduction
-- name: Users
-  description: Endpoints related to retrieving, managing relationships of Users
-  externalDocs:
-    description: Find out more
-    url: https://docs.x.com/x-api/users/introduction
+  - name: Posts
+    description: Endpoints related to retrieving, searching, and modifying Posts
+    externalDocs:
+      description: Find out more
+      url: https://docs.x.com/x-api/posts/introduction
+  - name: Users
+    description: Endpoints related to retrieving, managing relationships of Users
+    externalDocs:
+      description: Find out more
+      url: https://docs.x.com/x-api/users/introduction
 paths:
   /2/tweets:
     get:
       security:
-      - OAuth2UserToken:
-        - tweet.read
-        - users.read
-      - UserToken: []
-      - BearerToken: []
+        - OAuth2UserToken:
+            - tweet.read
+            - users.read
+        - UserToken: []
+        - BearerToken: []
       tags:
-      - Posts
+        - Posts
       summary: Get Posts by IDs
       operationId: getPostsByIds
       parameters:
-      - name: ids
-        in: query
-        required: true
-        schema:
-          type: array
-          minItems: 1
-          maxItems: 100
-          items:
-            $ref: '#/components/schemas/PostId'
-        explode: false
-        style: form
-      - $ref: '#/components/parameters/PostFieldsParameter'
-      - $ref: '#/components/parameters/PostExpansionsParameter'
-      - $ref: '#/components/parameters/UserFieldsParameter'
-      - $ref: '#/components/parameters/MediaFieldsParameter'
-      - $ref: '#/components/parameters/PollFieldsParameter'
-      - $ref: '#/components/parameters/PlaceFieldsParameter'
+        - name: ids
+          in: query
+          required: true
+          schema:
+            type: array
+            minItems: 1
+            maxItems: 100
+            items:
+              $ref: '#/components/schemas/PostId'
+          explode: false
+          style: form
+        - $ref: '#/components/parameters/PostFieldsParameter'
+        - $ref: '#/components/parameters/PostExpansionsParameter'
+        - $ref: '#/components/parameters/UserFieldsParameter'
+        - $ref: '#/components/parameters/MediaFieldsParameter'
+        - $ref: '#/components/parameters/PollFieldsParameter'
+        - $ref: '#/components/parameters/PlaceFieldsParameter'
       responses:
         '200':
           description: The request has succeeded.
@@ -78,13 +79,13 @@ paths:
                 $ref: '#/components/schemas/Problem'
     post:
       security:
-      - OAuth2UserToken:
-        - tweet.read
-        - users.read
-        - tweet.write
-      - UserToken: []
+        - OAuth2UserToken:
+            - tweet.read
+            - users.read
+            - tweet.write
+        - UserToken: []
       tags:
-      - Posts
+        - Posts
       summary: Create Posts
       operationId: createPosts
       requestBody:
@@ -112,25 +113,25 @@ paths:
   /2/tweets/{tweet_id}/hidden:
     put:
       security:
-      - OAuth2UserToken:
-        - tweet.read
-        - tweet.moderate.write
-        - users.read
-      - UserToken: []
+        - OAuth2UserToken:
+            - tweet.read
+            - tweet.moderate.write
+            - users.read
+        - UserToken: []
       tags:
-      - Posts
+        - Posts
       summary: Hide reply
       description: Hides or unhides a reply to a conversation owned by the authenticated user.
       externalDocs:
         url: https://developer.twitter.com/en/docs/twitter-api/tweets/hide-replies/api-reference/put-tweets-id-hidden
       operationId: hidePostsReply
       parameters:
-      - name: tweet_id
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/PostId'
-        style: simple
+        - name: tweet_id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PostId'
+          style: simple
       requestBody:
         content:
           application/json:
@@ -156,22 +157,22 @@ paths:
   /2/tweets/{id}:
     delete:
       security:
-      - OAuth2UserToken:
-        - tweet.read
-        - users.read
-        - tweet.write
-      - UserToken: []
+        - OAuth2UserToken:
+            - tweet.read
+            - users.read
+            - tweet.write
+        - UserToken: []
       tags:
-      - Posts
+        - Posts
       summary: Delete Posts
       operationId: deletePosts
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/PostId'
-        style: simple
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PostId'
+          style: simple
       responses:
         '200':
           description: The request has succeeded.
@@ -190,28 +191,28 @@ paths:
                 $ref: '#/components/schemas/Problem'
     get:
       security:
-      - OAuth2UserToken:
-        - users.read
-        - tweet.read
-      - UserToken: []
-      - BearerToken: []
+        - OAuth2UserToken:
+            - users.read
+            - tweet.read
+        - UserToken: []
+        - BearerToken: []
       tags:
-      - Posts
+        - Posts
       summary: Get Posts by ID
       operationId: getPostsById
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/PostId'
-        style: simple
-      - $ref: '#/components/parameters/PostFieldsParameter'
-      - $ref: '#/components/parameters/PostExpansionsParameter'
-      - $ref: '#/components/parameters/UserFieldsParameter'
-      - $ref: '#/components/parameters/MediaFieldsParameter'
-      - $ref: '#/components/parameters/PollFieldsParameter'
-      - $ref: '#/components/parameters/PlaceFieldsParameter'
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/PostId'
+          style: simple
+        - $ref: '#/components/parameters/PostFieldsParameter'
+        - $ref: '#/components/parameters/PostExpansionsParameter'
+        - $ref: '#/components/parameters/UserFieldsParameter'
+        - $ref: '#/components/parameters/MediaFieldsParameter'
+        - $ref: '#/components/parameters/PollFieldsParameter'
+        - $ref: '#/components/parameters/PlaceFieldsParameter'
       responses:
         '200':
           description: The request has succeeded.
@@ -231,96 +232,97 @@ paths:
   /2/tweets/search/recent:
     get:
       security:
-      - OAuth2UserToken:
-        - tweet.read
-        - users.read
-      - UserToken: []
-      - BearerToken: []
+        - OAuth2UserToken:
+            - tweet.read
+            - users.read
+        - UserToken: []
+        - BearerToken: []
       tags:
-      - Posts
+        - Posts
       summary: Search Posts Recent
-      description: At most one of `start_time`, `since_id` may be provided. At most one of `end_time`, `until_id` may be provided.
+      description:
+        At most one of `start_time`, `since_id` may be provided. At most one of `end_time`, `until_id` may be provided.
         At most one of `pagination_token`, `next_token` may be provided.
       operationId: searchPostsRecent
       parameters:
-      - name: query
-        in: query
-        required: true
-        schema:
-          type: string
-          minLength: 1
-          maxLength: 4096
-        style: form
-      - name: max_results
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 10
-          maximum: 100
-          format: int32
-          default: 10
-        style: form
-      - name: next_token
-        in: query
-        description: A base32hex-encoded pagination token.
-        required: false
-        schema:
-          type: string
-          minLength: 1
-        style: form
-      - name: pagination_token
-        in: query
-        description: A base32hex-encoded pagination token.
-        required: false
-        schema:
-          type: string
-          minLength: 1
-        style: form
-      - name: start_time
-        in: query
-        description: Must be within the last 7 days.
-        required: false
-        schema:
-          type: string
-          format: date-time
-        style: form
-      - name: end_time
-        in: query
-        required: false
-        schema:
-          type: string
-          format: date-time
-        style: form
-      - name: since_id
-        in: query
-        required: false
-        schema:
-          type: string
-          pattern: ^[0-9]{1,19}$
-        style: form
-      - name: until_id
-        in: query
-        required: false
-        schema:
-          type: string
-          pattern: ^[0-9]{1,19}$
-        style: form
-      - name: sort_order
-        in: query
-        required: false
-        schema:
-          type: string
-          enum:
-          - recency
-          - relevancy
-        style: form
-      - $ref: '#/components/parameters/PostFieldsParameter'
-      - $ref: '#/components/parameters/PostExpansionsParameter'
-      - $ref: '#/components/parameters/UserFieldsParameter'
-      - $ref: '#/components/parameters/MediaFieldsParameter'
-      - $ref: '#/components/parameters/PollFieldsParameter'
-      - $ref: '#/components/parameters/PlaceFieldsParameter'
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 4096
+          style: form
+        - name: max_results
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 10
+            maximum: 100
+            format: int32
+            default: 10
+          style: form
+        - name: next_token
+          in: query
+          description: A base32hex-encoded pagination token.
+          required: false
+          schema:
+            type: string
+            minLength: 1
+          style: form
+        - name: pagination_token
+          in: query
+          description: A base32hex-encoded pagination token.
+          required: false
+          schema:
+            type: string
+            minLength: 1
+          style: form
+        - name: start_time
+          in: query
+          description: Must be within the last 7 days.
+          required: false
+          schema:
+            type: string
+            format: date-time
+          style: form
+        - name: end_time
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+          style: form
+        - name: since_id
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: ^[0-9]{1,19}$
+          style: form
+        - name: until_id
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: ^[0-9]{1,19}$
+          style: form
+        - name: sort_order
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - recency
+              - relevancy
+          style: form
+        - $ref: '#/components/parameters/PostFieldsParameter'
+        - $ref: '#/components/parameters/PostExpansionsParameter'
+        - $ref: '#/components/parameters/UserFieldsParameter'
+        - $ref: '#/components/parameters/MediaFieldsParameter'
+        - $ref: '#/components/parameters/PollFieldsParameter'
+        - $ref: '#/components/parameters/PlaceFieldsParameter'
       responses:
         '200':
           description: The request has succeeded.
@@ -340,91 +342,92 @@ paths:
   /2/users/{id}/tweets:
     get:
       security:
-      - OAuth2UserToken:
-        - tweet.read
-        - users.read
-      - UserToken: []
-      - BearerToken: []
+        - OAuth2UserToken:
+            - tweet.read
+            - users.read
+        - UserToken: []
+        - BearerToken: []
       tags:
-      - Users
+        - Users
       summary: Get Users Posts
-      description: When both are provided, `start_time` must be earlier than `end_time`. When both are provided, `since_id`
+      description:
+        When both are provided, `start_time` must be earlier than `end_time`. When both are provided, `since_id`
         must be less than `until_id`.
       operationId: getUsersPosts
       parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/UserId'
-        style: simple
-      - name: max_results
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 5
-          maximum: 100
-          format: int32
-        style: form
-      - name: pagination_token
-        in: query
-        description: A base32hex-encoded pagination token.
-        required: false
-        schema:
-          type: string
-          minLength: 1
-        style: form
-      - name: start_time
-        in: query
-        description: Must be on or after 2010-11-06.
-        required: false
-        schema:
-          type: string
-          format: date-time
-        style: form
-      - name: end_time
-        in: query
-        description: Must be on or after 2010-11-06.
-        required: false
-        schema:
-          type: string
-          format: date-time
-        style: form
-      - name: since_id
-        in: query
-        required: false
-        schema:
-          type: string
-          pattern: ^[0-9]{1,19}$
-        style: form
-      - name: until_id
-        in: query
-        required: false
-        schema:
-          type: string
-          pattern: ^[0-9]{1,19}$
-        style: form
-      - name: exclude
-        in: query
-        required: false
-        schema:
-          type: array
-          minItems: 1
-          uniqueItems: true
-          items:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+          style: simple
+        - name: max_results
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 5
+            maximum: 100
+            format: int32
+          style: form
+        - name: pagination_token
+          in: query
+          description: A base32hex-encoded pagination token.
+          required: false
+          schema:
             type: string
-            enum:
-            - replies
-            - retweets
-        explode: false
-        style: form
-      - $ref: '#/components/parameters/PostFieldsParameter'
-      - $ref: '#/components/parameters/PostExpansionsParameter'
-      - $ref: '#/components/parameters/UserFieldsParameter'
-      - $ref: '#/components/parameters/MediaFieldsParameter'
-      - $ref: '#/components/parameters/PollFieldsParameter'
-      - $ref: '#/components/parameters/PlaceFieldsParameter'
+            minLength: 1
+          style: form
+        - name: start_time
+          in: query
+          description: Must be on or after 2010-11-06.
+          required: false
+          schema:
+            type: string
+            format: date-time
+          style: form
+        - name: end_time
+          in: query
+          description: Must be on or after 2010-11-06.
+          required: false
+          schema:
+            type: string
+            format: date-time
+          style: form
+        - name: since_id
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: ^[0-9]{1,19}$
+          style: form
+        - name: until_id
+          in: query
+          required: false
+          schema:
+            type: string
+            pattern: ^[0-9]{1,19}$
+          style: form
+        - name: exclude
+          in: query
+          required: false
+          schema:
+            type: array
+            minItems: 1
+            uniqueItems: true
+            items:
+              type: string
+              enum:
+                - replies
+                - retweets
+          explode: false
+          style: form
+        - $ref: '#/components/parameters/PostFieldsParameter'
+        - $ref: '#/components/parameters/PostExpansionsParameter'
+        - $ref: '#/components/parameters/UserFieldsParameter'
+        - $ref: '#/components/parameters/MediaFieldsParameter'
+        - $ref: '#/components/parameters/PollFieldsParameter'
+        - $ref: '#/components/parameters/PlaceFieldsParameter'
       responses:
         '200':
           description: The request has succeeded.
@@ -491,17 +494,18 @@ components:
           type: string
           description: Who can reply to this tweet.
           enum:
-          - following
-          - mentionedUsers
-          - subscribers
-          - verified
+            - following
+            - mentionedUsers
+            - subscribers
+            - verified
         share_with_followers:
           type: boolean
           description: Share an exclusive (super-follower) tweet with all followers.
         text:
           type: string
-          description: 'Text of the tweet. Required unless media is provided.  Defaulted to an empty string so it is always
-            sent: the backend''s `tweet_text` variable is non-null and rejects an absent value.'
+          description:
+            "Text of the tweet. Required unless media is provided.  Defaulted to an empty string so it is always
+            sent: the backend's `tweet_text` variable is non-null and rejects an absent value."
           default: ''
       additionalProperties: false
     GetPostsByIdsResponse:
@@ -568,11 +572,12 @@ components:
     CreatePostsReply:
       type: object
       required:
-      - in_reply_to_tweet_id
+        - in_reply_to_tweet_id
       properties:
         auto_populate_reply_metadata:
           type: boolean
-          description: If true, reply metadata is automatically populated. Accepted for compatibility; it carries no backend
+          description:
+            If true, reply metadata is automatically populated. Accepted for compatibility; it carries no backend
             argument and is dropped before the mutation is issued (see `translate_body`).
         exclude_reply_user_ids:
           type: array
@@ -587,8 +592,8 @@ components:
     Error:
       type: object
       required:
-      - code
-      - message
+        - code
+        - message
       properties:
         code:
           type: integer
@@ -607,8 +612,8 @@ components:
     CreatePostsPoll:
       type: object
       required:
-      - options
-      - duration_minutes
+        - options
+        - duration_minutes
       properties:
         duration_minutes:
           type: integer
@@ -626,13 +631,14 @@ components:
             maxLength: 25
         reply_settings:
           type: string
-          description: Who can reply to the poll Tweet. Accepted for compatibility; it carries no backend argument and is
+          description:
+            Who can reply to the poll Tweet. Accepted for compatibility; it carries no backend argument and is
             dropped before the mutation is issued (see `translate_body`).
           enum:
-          - following
-          - mentionedUsers
-          - subscribers
-          - verified
+            - following
+            - mentionedUsers
+            - subscribers
+            - verified
       additionalProperties: false
     HidePostsReplyResponseData:
       type: object
@@ -653,15 +659,15 @@ components:
           $ref: '#/components/schemas/Expansions'
     Problem:
       oneOf:
-      - $ref: '#/components/schemas/ResourceNotFoundProblem'
-      - $ref: '#/components/schemas/InvalidRequestProblem'
-      - $ref: '#/components/schemas/NotAuthorizedForResourceProblem'
-      - $ref: '#/components/schemas/NotAuthorizedForFieldProblem'
-      - $ref: '#/components/schemas/FieldUnauthorizedProblem'
-      - $ref: '#/components/schemas/FieldHydrationFailureProblem'
-      - $ref: '#/components/schemas/ResourceUnavailableProblem'
-      - $ref: '#/components/schemas/DisallowedResourceProblem'
-      - $ref: '#/components/schemas/InternalErrorProblem'
+        - $ref: '#/components/schemas/ResourceNotFoundProblem'
+        - $ref: '#/components/schemas/InvalidRequestProblem'
+        - $ref: '#/components/schemas/NotAuthorizedForResourceProblem'
+        - $ref: '#/components/schemas/NotAuthorizedForFieldProblem'
+        - $ref: '#/components/schemas/FieldUnauthorizedProblem'
+        - $ref: '#/components/schemas/FieldHydrationFailureProblem'
+        - $ref: '#/components/schemas/ResourceUnavailableProblem'
+        - $ref: '#/components/schemas/DisallowedResourceProblem'
+        - $ref: '#/components/schemas/InternalErrorProblem'
       discriminator:
         propertyName: type
         mapping:
@@ -677,7 +683,7 @@ components:
     HidePostsReplyRequest:
       type: object
       required:
-      - hidden
+        - hidden
       properties:
         hidden:
           type: boolean
@@ -748,7 +754,8 @@ components:
           description: Organic nonpublic engagement metrics for the Post at the time of the request.
         paid_partnership:
           type: boolean
-          description: Indicates if this Post is a paid partnership, i.e. it has been disclosed by the author as containing
+          description:
+            Indicates if this Post is a paid partnership, i.e. it has been disclosed by the author as containing
             paid promotion.
         possibly_sensitive:
           type: boolean
@@ -783,7 +790,7 @@ components:
       type: object
       description: The full content of the Post, including text beyond 280 characters.
       required:
-      - text
+        - text
       properties:
         entities:
           type: object
@@ -795,9 +802,9 @@ components:
                 type: object
                 description: A hashtag or cashtag entity.
                 required:
-                - start
-                - end
-                - tag
+                  - start
+                  - end
+                  - tag
                 properties:
                   end:
                     type: integer
@@ -816,9 +823,9 @@ components:
                 type: object
                 description: A hashtag or cashtag entity.
                 required:
-                - start
-                - end
-                - tag
+                  - start
+                  - end
+                  - tag
                 properties:
                   end:
                     type: integer
@@ -837,8 +844,8 @@ components:
                 type: object
                 description: A user mention entity.
                 required:
-                - start
-                - end
+                  - start
+                  - end
                 properties:
                   end:
                     type: integer
@@ -859,8 +866,8 @@ components:
                 type: object
                 description: A URL entity found in note Post text.
                 required:
-                - start
-                - end
+                  - start
+                  - end
                 properties:
                   display_url:
                     type: string
@@ -908,9 +915,9 @@ components:
     DisallowedResourceProblem:
       type: object
       required:
-      - type
-      - title
-      - detail
+        - type
+        - title
+        - detail
       properties:
         detail:
           type: string
@@ -927,11 +934,11 @@ components:
         type:
           type: string
           enum:
-          - https://api.x.com/2/problems/disallowed-resource
+            - https://api.x.com/2/problems/disallowed-resource
     CreatePostsEditOptions:
       type: object
       required:
-      - previous_post_id
+        - previous_post_id
       properties:
         previous_post_id:
           type: string
@@ -991,10 +998,10 @@ components:
     NotAuthorizedForFieldProblem:
       type: object
       required:
-      - type
-      - title
-      - detail
-      - field
+        - type
+        - title
+        - detail
+        - field
       properties:
         detail:
           type: string
@@ -1015,15 +1022,15 @@ components:
         type:
           type: string
           enum:
-          - https://api.x.com/2/problems/not-authorized-for-field
+            - https://api.x.com/2/problems/not-authorized-for-field
         value:
           type: string
     PostWithheld:
       type: object
       description: Withholding details for withheld content.
       required:
-      - copyright
-      - country_codes
+        - copyright
+        - country_codes
       properties:
         copyright:
           type: boolean
@@ -1037,16 +1044,16 @@ components:
           type: string
           description: Whether the withholding applies to a Post or a User.
           enum:
-          - post
-          - user
+            - post
+            - user
           nullable: true
     ResourceUnavailableProblem:
       type: object
       required:
-      - type
-      - title
-      - detail
-      - resource_type
+        - type
+        - title
+        - detail
+        - resource_type
       properties:
         detail:
           type: string
@@ -1061,17 +1068,17 @@ components:
         type:
           type: string
           enum:
-          - https://api.x.com/2/problems/resource-unavailable
+            - https://api.x.com/2/problems/resource-unavailable
     PostPublicMetrics:
       type: object
       description: Engagement metrics for the Post at the time of the request.
       required:
-      - repost_count
-      - reply_count
-      - like_count
-      - quote_count
-      - bookmark_count
-      - impression_count
+        - repost_count
+        - reply_count
+        - like_count
+        - quote_count
+        - bookmark_count
+        - impression_count
       properties:
         bookmark_count:
           type: integer
@@ -1116,10 +1123,10 @@ components:
     FieldHydrationFailureProblem:
       type: object
       required:
-      - type
-      - title
-      - detail
-      - field
+        - type
+        - title
+        - detail
+        - field
       properties:
         detail:
           type: string
@@ -1136,7 +1143,7 @@ components:
         type:
           type: string
           enum:
-          - https://api.x.com/2/problems/field-hydration-failure
+            - https://api.x.com/2/problems/field-hydration-failure
     PostEntities:
       type: object
       description: A list of metadata entities (hashtags, mentions, URLs) found in the Post text.
@@ -1147,9 +1154,9 @@ components:
             type: object
             description: A hashtag or cashtag entity.
             required:
-            - start
-            - end
-            - tag
+              - start
+              - end
+              - tag
             properties:
               end:
                 type: integer
@@ -1168,9 +1175,9 @@ components:
             type: object
             description: A hashtag or cashtag entity.
             required:
-            - start
-            - end
-            - tag
+              - start
+              - end
+              - tag
             properties:
               end:
                 type: integer
@@ -1189,8 +1196,8 @@ components:
             type: object
             description: A user mention entity.
             required:
-            - start
-            - end
+              - start
+              - end
             properties:
               end:
                 type: integer
@@ -1211,8 +1218,8 @@ components:
             type: object
             description: A URL entity found in the Post text, enriched with link metadata.
             required:
-            - start
-            - end
+              - start
+              - end
             properties:
               description:
                 type: string
@@ -1275,21 +1282,22 @@ components:
       type: object
       description: The scopes for this Post.
       required:
-      - followers
+        - followers
       properties:
         followers:
           type: boolean
           description: Indicates whether visibility of this Post is limited to the author's followers.
     PostReferencedPosts:
       type: array
-      description: A list of Posts this Post refers to. If the Post is a Retweet, Quote or Reply, it includes the referenced
+      description:
+        A list of Posts this Post refers to. If the Post is a Retweet, Quote or Reply, it includes the referenced
         Post's type and ID.
       items:
         type: object
         description: A reference from this Post to another Post (repost, quote, or reply).
         required:
-        - type
-        - id
+          - type
+          - id
         properties:
           id:
             type: string
@@ -1297,19 +1305,19 @@ components:
           type:
             description: How this Post references the other Post.
             oneOf:
-            - type: string
-              description: The kind of Post-to-Post reference.
-              enum:
-              - retweeted
-              - quoted
-              - replied_to
+              - type: string
+                description: The kind of Post-to-Post reference.
+                enum:
+                  - retweeted
+                  - quoted
+                  - replied_to
     NotAuthorizedForResourceProblem:
       type: object
       required:
-      - type
-      - title
-      - detail
-      - resource_type
+        - type
+        - title
+        - detail
+        - resource_type
       properties:
         detail:
           type: string
@@ -1328,15 +1336,15 @@ components:
         type:
           type: string
           enum:
-          - https://api.x.com/2/problems/not-authorized-for-resource
+            - https://api.x.com/2/problems/not-authorized-for-resource
         value:
           type: string
     InternalErrorProblem:
       type: object
       required:
-      - type
-      - title
-      - detail
+        - type
+        - title
+        - detail
       properties:
         detail:
           type: string
@@ -1347,7 +1355,7 @@ components:
         type:
           type: string
           enum:
-          - https://api.x.com/2/problems/internal-error
+            - https://api.x.com/2/problems/internal-error
     PostEditControls:
       type: object
       description: Indicates how much longer (if at all) this Post can be edited.
@@ -1408,9 +1416,9 @@ components:
     InvalidRequestProblem:
       type: object
       required:
-      - type
-      - title
-      - detail
+        - type
+        - title
+        - detail
       properties:
         detail:
           type: string
@@ -1423,16 +1431,16 @@ components:
         type:
           type: string
           enum:
-          - https://api.x.com/2/problems/invalid-request
+            - https://api.x.com/2/problems/invalid-request
         value:
           type: string
     FieldUnauthorizedProblem:
       type: object
       required:
-      - type
-      - title
-      - detail
-      - field
+        - type
+        - title
+        - detail
+        - field
       properties:
         detail:
           type: string
@@ -1449,11 +1457,11 @@ components:
         type:
           type: string
           enum:
-          - https://api.x.com/2/problems/field-unauthorized
+            - https://api.x.com/2/problems/field-unauthorized
     CreatePostsGeo:
       type: object
       required:
-      - place_id
+        - place_id
       properties:
         place_id:
           type: string
@@ -1514,7 +1522,7 @@ components:
     CreatePostsMedia:
       type: object
       required:
-      - media_ids
+        - media_ids
       properties:
         call_to_actions:
           description: Call-to-action button rendered on the media entity.
@@ -1574,7 +1582,8 @@ components:
           description: Indicates if this User has completed identity verification.
         location:
           type: string
-          description: The location specified in the User's profile, if the User provided one. As this is a freeform value,
+          description:
+            The location specified in the User's profile, if the User provided one. As this is a freeform value,
             it may not indicate a valid location.
         most_recent_post_id:
           type: string
@@ -1596,7 +1605,8 @@ components:
           description: The URL to the profile image for this User.
         protected:
           type: boolean
-          description: Indicates if this User has chosen to protect their Posts (in other words, if this User's Posts are
+          description:
+            Indicates if this User has chosen to protect their Posts (in other words, if this User's Posts are
             private).
         public_metrics:
           $ref: '#/components/schemas/UserPublicMetrics'
@@ -1634,10 +1644,10 @@ components:
     ResourceNotFoundProblem:
       type: object
       required:
-      - type
-      - title
-      - detail
-      - resource_type
+        - type
+        - title
+        - detail
+        - resource_type
       properties:
         detail:
           type: string
@@ -1654,7 +1664,7 @@ components:
         type:
           type: string
           enum:
-          - https://api.x.com/2/problems/resource-not-found
+            - https://api.x.com/2/problems/resource-not-found
         value:
           type: string
     PostContextAnnotations:
@@ -1664,44 +1674,44 @@ components:
         type: object
         description: A single inferred annotation about the Post (domain and entity context).
         required:
-        - domain
-        - entity
+          - domain
+          - entity
         properties:
           domain:
             description: The domain (broad category) this annotation belongs to.
             oneOf:
-            - type: object
-              description: A domain or entity referenced by a context annotation.
-              properties:
-                description:
-                  type: string
-                  nullable: true
-                id:
-                  type: string
-                  nullable: true
-                name:
-                  type: string
-                  nullable: true
+              - type: object
+                description: A domain or entity referenced by a context annotation.
+                properties:
+                  description:
+                    type: string
+                    nullable: true
+                  id:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                    nullable: true
           entity:
             description: The specific entity recognized within the domain.
             oneOf:
-            - type: object
-              description: A domain or entity referenced by a context annotation.
-              properties:
-                description:
-                  type: string
-                  nullable: true
-                id:
-                  type: string
-                  nullable: true
-                name:
-                  type: string
-                  nullable: true
+              - type: object
+                description: A domain or entity referenced by a context annotation.
+                properties:
+                  description:
+                    type: string
+                    nullable: true
+                  id:
+                    type: string
+                    nullable: true
+                  name:
+                    type: string
+                    nullable: true
     CreatePostsResponseData:
       type: object
       required:
-      - id
-      - text
+        - id
+        - text
       properties:
         edit_history_post_ids:
           type: array
@@ -1722,9 +1732,9 @@ components:
         type: object
         description: A single option (choice) available in a poll.
         required:
-        - position
-        - label
-        - votes
+          - position
+          - label
+          - votes
         properties:
           label:
             type: string
@@ -1745,8 +1755,8 @@ components:
           type: object
           description: A GeoJSON Point geometry.
           required:
-          - type
-          - coordinates
+            - type
+            - coordinates
           properties:
             coordinates:
               type: array
@@ -1760,7 +1770,7 @@ components:
               type: string
               description: The GeoJSON geometry type.
               enum:
-              - Point
+                - Point
           nullable: true
         place_id:
           type: string
@@ -1769,7 +1779,7 @@ components:
     DeletePostsResponseData:
       type: object
       required:
-      - deleted
+        - deleted
       properties:
         deleted:
           type: boolean
@@ -1778,9 +1788,9 @@ components:
       type: object
       description: The geographic location of this place, expressed as a GeoJSON Feature.
       required:
-      - type
-      - bbox
-      - properties
+        - type
+        - bbox
+        - properties
       properties:
         bbox:
           type: array
@@ -1796,9 +1806,9 @@ components:
         type:
           description: The GeoJSON feature type.
           oneOf:
-          - type: string
-            enum:
-            - Feature
+            - type: string
+              enum:
+                - Feature
     PlaceContainedWithin:
       type: array
       description: A list of unique identifiers of the Places that contain this place.
@@ -1808,10 +1818,10 @@ components:
       type: object
       description: A list of metrics for this User.
       required:
-      - followers_count
-      - following_count
-      - post_count
-      - listed_count
+        - followers_count
+        - following_count
+        - post_count
+        - listed_count
       properties:
         followers_count:
           type: integer
@@ -1920,9 +1930,9 @@ components:
                 type: object
                 description: A hashtag or cashtag entity.
                 required:
-                - start
-                - end
-                - tag
+                  - start
+                  - end
+                  - tag
                 properties:
                   end:
                     type: integer
@@ -1941,9 +1951,9 @@ components:
                 type: object
                 description: A hashtag or cashtag entity.
                 required:
-                - start
-                - end
-                - tag
+                  - start
+                  - end
+                  - tag
                 properties:
                   end:
                     type: integer
@@ -1962,9 +1972,9 @@ components:
                 type: object
                 description: A user mention entity.
                 required:
-                - start
-                - end
-                - username
+                  - start
+                  - end
+                  - username
                 properties:
                   end:
                     type: integer
@@ -1984,9 +1994,9 @@ components:
                 type: object
                 description: A URL entity found in profile text.
                 required:
-                - start
-                - end
-                - url
+                  - start
+                  - end
+                  - url
                 properties:
                   description:
                     type: string
@@ -2055,9 +2065,9 @@ components:
                 type: object
                 description: A URL entity found in profile text.
                 required:
-                - start
-                - end
-                - url
+                  - start
+                  - end
+                  - url
                 properties:
                   description:
                     type: string
@@ -2120,7 +2130,7 @@ components:
       type: object
       description: Public engagement metrics for the media at the time of the request.
       required:
-      - view_count
+        - view_count
       properties:
         view_count:
           type: integer
@@ -2157,7 +2167,8 @@ components:
           nullable: true
         view_count:
           type: integer
-          description: The number of organic views of this video. Null when the backend returns quartile data without a view
+          description:
+            The number of organic views of this video. Null when the backend returns quartile data without a view
             count.
           format: int64
           nullable: true
@@ -2181,16 +2192,16 @@ components:
         type: string
         description: A connection between the authenticated User and this User.
         enum:
-        - blocking
-        - follow_request_received
-        - follow_request_sent
-        - followed_by
-        - following
-        - muting
+          - blocking
+          - follow_request_received
+          - follow_request_sent
+          - followed_by
+          - following
+          - muting
     CreatePostsMediaCallToActionsWatchNow:
       type: object
       required:
-      - url
+        - url
       properties:
         url:
           type: string
@@ -2200,7 +2211,7 @@ components:
       type: object
       description: The subscription relationship between this User and you.
       required:
-      - subscribes_to_you
+        - subscribes_to_you
       properties:
         subscribes_to_you:
           type: boolean
@@ -2219,7 +2230,7 @@ components:
           type: string
           description: The scope of the withholding. Only present, with the value "user", when the entire User is withheld.
           enum:
-          - user
+            - user
           nullable: true
     MediaPromotedMetrics:
       type: object
@@ -2252,7 +2263,8 @@ components:
           nullable: true
         view_count:
           type: integer
-          description: The number of promoted views of this video. Null when the backend returns quartile data without a view
+          description:
+            The number of promoted views of this video. Null when the backend returns quartile data without a view
             count.
           format: int64
           nullable: true
@@ -2281,7 +2293,7 @@ components:
     CreatePostsMediaCallToActionsVisitSite:
       type: object
       required:
-      - url
+        - url
       properties:
         url:
           type: string
@@ -2371,37 +2383,37 @@ components:
         items:
           type: string
           enum:
-          - article
-          - article_title
-          - attachments
-          - card_uri
-          - community_id
-          - context_annotations
-          - conversation_id
-          - created_at
-          - display_text_range
-          - edit_controls
-          - entities
-          - geo
-          - id
-          - lang
-          - matched_media_notes
-          - media_metadata
-          - non_public_metrics
-          - note_post
-          - note_request_suggestions
-          - organic_metrics
-          - paid_partnership
-          - possibly_sensitive
-          - promoted_metrics
-          - public_metrics
-          - reply_settings
-          - scopes
-          - source
-          - suggested_source_links
-          - suggested_source_links_with_counts
-          - text
-          - withheld
+            - article
+            - article_title
+            - attachments
+            - card_uri
+            - community_id
+            - context_annotations
+            - conversation_id
+            - created_at
+            - display_text_range
+            - edit_controls
+            - entities
+            - geo
+            - id
+            - lang
+            - matched_media_notes
+            - media_metadata
+            - non_public_metrics
+            - note_post
+            - note_request_suggestions
+            - organic_metrics
+            - paid_partnership
+            - possibly_sensitive
+            - promoted_metrics
+            - public_metrics
+            - reply_settings
+            - scopes
+            - source
+            - suggested_source_links
+            - suggested_source_links_with_counts
+            - text
+            - withheld
       explode: false
       style: form
     UserFieldsParameter:
@@ -2417,31 +2429,31 @@ components:
         items:
           type: string
           enum:
-          - confirmed_email
-          - connection_status
-          - created_at
-          - description
-          - entities
-          - id
-          - is_identity_verified
-          - location
-          - name
-          - parody
-          - profile_banner_url
-          - profile_image_url
-          - protected
-          - public_metrics
-          - receives_your_dm
-          - subscriber_count
-          - subscribes_to_you
-          - subscription
-          - subscription_type
-          - url
-          - username
-          - verified
-          - verified_followers_count
-          - verified_type
-          - withheld
+            - confirmed_email
+            - connection_status
+            - created_at
+            - description
+            - entities
+            - id
+            - is_identity_verified
+            - location
+            - name
+            - parody
+            - profile_banner_url
+            - profile_image_url
+            - protected
+            - public_metrics
+            - receives_your_dm
+            - subscriber_count
+            - subscribes_to_you
+            - subscription
+            - subscription_type
+            - url
+            - username
+            - verified
+            - verified_followers_count
+            - verified_type
+            - withheld
       explode: false
       style: form
     PollFieldsParameter:
@@ -2457,11 +2469,11 @@ components:
         items:
           type: string
           enum:
-          - duration_minutes
-          - end_datetime
-          - id
-          - options
-          - voting_status
+            - duration_minutes
+            - end_datetime
+            - id
+            - options
+            - voting_status
       explode: false
       style: form
     PlaceFieldsParameter:
@@ -2477,14 +2489,14 @@ components:
         items:
           type: string
           enum:
-          - contained_within
-          - country
-          - country_code
-          - full_name
-          - geo
-          - id
-          - name
-          - place_type
+            - contained_within
+            - country
+            - country_code
+            - full_name
+            - geo
+            - id
+            - name
+            - place_type
       explode: false
       style: form
     MediaFieldsParameter:
@@ -2500,19 +2512,19 @@ components:
         items:
           type: string
           enum:
-          - alt_text
-          - duration_ms
-          - height
-          - media_key
-          - non_public_metrics
-          - organic_metrics
-          - preview_image_url
-          - promoted_metrics
-          - public_metrics
-          - type
-          - url
-          - variants
-          - width
+            - alt_text
+            - duration_ms
+            - height
+            - media_key
+            - non_public_metrics
+            - organic_metrics
+            - preview_image_url
+            - promoted_metrics
+            - public_metrics
+            - type
+            - url
+            - variants
+            - width
       explode: false
       style: form
     PostExpansionsParameter:
@@ -2527,18 +2539,18 @@ components:
         items:
           type: string
           enum:
-          - article.cover_media
-          - article.media_entities
-          - attachments.media_keys
-          - attachments.media_source_tweet
-          - attachments.poll_ids
-          - author_id
-          - edit_history_post_ids
-          - entities.mentions.username
-          - geo.place_id
-          - in_reply_to_user_id
-          - referenced_posts
-          - username
+            - article.cover_media
+            - article.media_entities
+            - attachments.media_keys
+            - attachments.media_source_tweet
+            - attachments.poll_ids
+            - author_id
+            - edit_history_post_ids
+            - entities.mentions.username
+            - geo.place_id
+            - in_reply_to_user_id
+            - referenced_posts
+            - username
       explode: false
       style: form
   securitySchemes:
@@ -2581,4 +2593,3 @@ components:
     BearerToken:
       type: http
       scheme: bearer
-

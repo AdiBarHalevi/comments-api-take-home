@@ -3,7 +3,7 @@
 Local stand-ins for Instagram and X comment APIs.
 
 | Platform  | Port | Base URL                      |
-|-----------|------|-------------------------------|
+| --------- | ---- | ----------------------------- |
 | Instagram | 3001 | `http://localhost:3001/v21.0` |
 | X         | 3002 | `http://localhost:3002`       |
 

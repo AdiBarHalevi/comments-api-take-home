@@ -28,6 +28,22 @@ services:
       timeout: 3s
       retries: 5
 
+  mock-instagram:
+    image: mockoon/cli:9
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./mocks/mockoon/instagram.json:/data/instagram.json:ro
+    command: ['--data', '/data/instagram.json', '--port', '3001']
+
+  mock-x:
+    image: mockoon/cli:9
+    ports:
+      - '3002:3002'
+    volumes:
+      - ./mocks/mockoon/x.json:/data/x.json:ro
+    command: ['--data', '/data/x.json', '--port', '3002']
+
 volumes:
   postgres-data:
   redis-data:

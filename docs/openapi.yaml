@@ -16,9 +16,28 @@ servers:
     description: Local development (Fastify)
 security: []
 tags:
+  - name: Posts
+    description: Local post mappings for discovering post ids
   - name: Comments
     description: Read and reply to comments on published posts
 paths:
+  /posts:
+    get:
+      operationId: getPosts
+      tags:
+        - Posts
+      summary: Get posts
+      description: |
+        Returns local post mappings (`platform` + `externalId`) seeded from connected
+        platform accounts. Use `id` when calling `getCommentsByPostId`.
+      parameters:
+        - $ref: '#/components/parameters/cursor'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetPostsSuccess'
+        '400':
+          $ref: '#/components/responses/BadRequest'
   /posts/{postId}/comments:
     get:
       operationId: getCommentsByPostId
@@ -123,6 +142,42 @@ components:
       allOf:
         - $ref: '#/components/schemas/Uuid'
       description: Stable internal id — use for reply URLs and polling
+    Platform:
+      type: string
+      enum:
+        - INSTAGRAM
+        - X
+      description: Social platform the post was published on
+    Post:
+      type: object
+      required:
+        - id
+        - platform
+        - externalId
+      properties:
+        id:
+          $ref: '#/components/schemas/Uuid'
+          description: Stable internal id — use for comment endpoints
+        platform:
+          $ref: '#/components/schemas/Platform'
+        externalId:
+          type: string
+          description: Platform post / media / tweet id
+        isActive:
+          type: boolean
+          description: Whether the post mapping is active
+    PaginatedPostsResponse:
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
     NullableString:
       type:
         - string
@@ -260,6 +315,20 @@ components:
       schema:
         $ref: '#/components/schemas/Uuid'
   examples:
+    GetPostsFirstPage:
+      summary: First page of posts
+      value:
+        data:
+          - id: 440e8400-e29b-41d4-a716-446655440000
+            platform: INSTAGRAM
+            externalId: '17858893269000000'
+            isActive: true
+          - id: 441e8400-e29b-41d4-a716-446655440001
+            platform: X
+            externalId: '1234567890123456789'
+            isActive: true
+        pagination:
+          nextCursor: null
     GetCommentsByPostIdFirstPage:
       summary: First page of post comments
       value:
@@ -337,6 +406,15 @@ components:
         error: Service Unavailable
         message: Queue unavailable
   responses:
+    GetPostsSuccess:
+      description: Paginated post mappings
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PaginatedPostsResponse'
+          examples:
+            firstPage:
+              $ref: '#/components/examples/GetPostsFirstPage'
     GetCommentsByPostIdSuccess:
       description: Paginated comments for the post
       content:

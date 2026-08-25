@@ -1,6 +1,7 @@
 {
   "extends": "fastify-tsconfig",
   "compilerOptions": {
+    "target": "ES2022",
     "outDir": "dist",
     "sourceMap": true
   },

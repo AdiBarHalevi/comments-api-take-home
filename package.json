@@ -11,25 +11,32 @@
     "start": "npm run build:ts && fastify start -l info dist/app.js",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
-    "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
-    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js"
+    "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App,Instagram,X\" -c \"yellow.bold,cyan.bold,magenta.bold,blue.bold\" \"npm:watch:ts\" \"npm:dev:start\" \"npm:mock:instagram\" \"npm:mock:x\"",
+    "dev:api": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
+    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js",
+    "mocks": "concurrently -k -p \"[{name}]\" -n \"Instagram,X\" -c \"magenta.bold,blue.bold\" \"npm:mock:instagram\" \"npm:mock:x\"",
+    "mock:instagram": "mockoon-cli start --data mocks/mockoon/instagram.json --port 3001",
+    "mock:x": "mockoon-cli start --data mocks/mockoon/x.json --port 3002"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "fastify": "^5.0.0",
-    "fastify-plugin": "^5.0.0",
     "@fastify/autoload": "^6.0.0",
     "@fastify/sensible": "^6.0.0",
-    "fastify-cli": "^8.0.0"
+    "dotenv": "^17.4.2",
+    "fastify": "^5.0.0",
+    "fastify-cli": "^8.0.0",
+    "fastify-plugin": "^5.0.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/node": "^25.0.3",
+    "@mockoon/cli": "^9.8.0",
+    "@types/node": "^25.9.5",
     "c8": "^11.0.0",
-    "ts-node": "^10.4.0",
     "concurrently": "^9.0.0",
     "fastify-tsconfig": "^3.0.0",
+    "ts-node": "^10.4.0",
     "typescript": "~5.9.2"
   }
 }

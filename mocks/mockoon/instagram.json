@@ -1,0 +1,455 @@
+{
+  "uuid": "524cac9b-997c-4c0f-bbc6-b648ca55fde7",
+  "lastMigration": 33,
+  "name": "Instagram Graph Comments API",
+  "endpointPrefix": "v21.0",
+  "latency": 0,
+  "port": 3001,
+  "hostname": "0.0.0.0",
+  "folders": [],
+  "routes": [
+    {
+      "uuid": "m3d1a000-1111-4222-8333-444455556677",
+      "type": "http",
+      "documentation": "GET sample media (static id)",
+      "method": "get",
+      "endpoint": "17841405309211841",
+      "responses": [
+        {
+          "uuid": "m3d1a000-1111-4222-8333-444455556678",
+          "body": "{\n  \"id\": \"17841405309211841\",\n  \"caption\": \"Our new product is live \u2014 tell us what you think!\",\n  \"media_type\": \"IMAGE\",\n  \"media_url\": \"https://example.com/media/sample.jpg\",\n  \"permalink\": \"https://www.instagram.com/p/ABC123xyz/\",\n  \"timestamp\": \"2026-08-20T14:00:00+0000\",\n  \"like_count\": 42,\n  \"comments_count\": 2,\n  \"username\": \"brand_account\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Media / post",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "0171ed27-b25b-4322-8b2e-1f0db53c2d41",
+      "type": "http",
+      "documentation": "Instagram Get Media Comments",
+      "method": "get",
+      "endpoint": ":media_id/comments",
+      "responses": [
+        {
+          "uuid": "edf0af1d-7a35-4bde-802b-f4059f6b5fac",
+          "body": "{\n  \"data\": [\n    {\n      \"id\": \"17858893269000001\",\n      \"text\": \"Amazing photo!\",\n      \"username\": \"fan_account\",\n      \"timestamp\": \"2026-08-20T14:30:00+0000\",\n      \"like_count\": 5,\n      \"hidden\": false\n    },\n    {\n      \"id\": \"17858893269000002\",\n      \"text\": \"When does this drop?\",\n      \"username\": \"curious_shopper\",\n      \"timestamp\": \"2026-08-20T15:12:00+0000\",\n      \"like_count\": 1,\n      \"hidden\": false\n    }\n  ],\n  \"paging\": { \"cursors\": { \"before\": \"QVFIUjRtc2c5NEl0ajN3\", \"after\": \"QVFIUmlKdXBzYWtyUml3\" } }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of comments.",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "4f369761-4b06-45fa-b8d1-c36d01a8abaa",
+      "type": "http",
+      "documentation": "Instagram Create Comment",
+      "method": "post",
+      "endpoint": ":media_id/comments",
+      "responses": [
+        {
+          "uuid": "63401fb6-39ed-4954-b1ff-ffac980aec13",
+          "body": "{\n  \"id\": \"{{faker 'string.numeric' 17}}\",\n  \"username\": \"brand_account\",\n  \"text\": \"{{body 'message'}}\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Comment created.",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "50e80055-ec41-44fb-959e-53d69e7a385f",
+      "type": "http",
+      "documentation": "Instagram Get Comment",
+      "method": "get",
+      "endpoint": ":comment_id",
+      "responses": [
+        {
+          "uuid": "ab2cc9c1-54f3-441a-afa1-0b2e195d8b8c",
+          "body": "{\n  \"id\": \"17858893269000001\",\n  \"text\": \"Amazing photo!\",\n  \"username\": \"fan_account\",\n  \"timestamp\": \"2026-04-17T14:30:00+0000\",\n  \"like_count\": 5,\n  \"hidden\": false,\n  \"parent_id\": \"\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Comment data.",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "ec196b6b-0929-48f4-9fc3-fc6e64a24c85",
+      "type": "http",
+      "documentation": "Instagram Hide or Unhide Comment",
+      "method": "post",
+      "endpoint": ":comment_id",
+      "responses": [
+        {
+          "uuid": "c1fbc037-8cba-48ba-988e-a55194cef88a",
+          "body": "{\n  \"success\": true\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Success.",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "8adac701-3050-4703-83b3-0c41a6911e03",
+      "type": "http",
+      "documentation": "Instagram Delete Comment",
+      "method": "delete",
+      "endpoint": ":comment_id",
+      "responses": [
+        {
+          "uuid": "3806349d-b85e-4d36-ae43-a81faee9c7f4",
+          "body": "{\n  \"success\": true\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Comment deleted.",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "5ef1cffb-5470-43ab-8b54-5a41a87ad0d4",
+      "type": "http",
+      "documentation": "Instagram Get Comment Replies",
+      "method": "get",
+      "endpoint": ":comment_id/replies",
+      "responses": [
+        {
+          "uuid": "86d94acf-3b2f-461e-9ad3-663282fb9c42",
+          "body": "{\n  \"data\": [\n    {\n      \"id\": \"17858893269000011\",\n      \"text\": \"Thanks \u2014 glad you liked it!\",\n      \"username\": \"brand_account\",\n      \"timestamp\": \"2026-08-20T14:45:00+0000\",\n      \"like_count\": 2,\n      \"hidden\": false,\n      \"parent_id\": \"{{urlParam 'comment_id'}}\"\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of reply comments.",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "364b91ee-ac31-41e6-9a9a-665d40a82e19",
+      "type": "http",
+      "documentation": "Instagram Create Comment Reply",
+      "method": "post",
+      "endpoint": ":comment_id/replies",
+      "responses": [
+        {
+          "uuid": "000b3b55-7f47-4bee-bbc0-1a7f2cd47196",
+          "body": "{\n  \"id\": \"{{faker 'string.numeric' 17}}\",\n  \"username\": \"brand_account\",\n  \"text\": \"{{body 'message'}}\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Reply created.",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "02401167-3d56-4d4a-b803-f5f422e9deaa",
+      "type": "http",
+      "documentation": "Get media by ID",
+      "method": "get",
+      "endpoint": ":media_id",
+      "responses": [
+        {
+          "uuid": "5b2c222d-c3da-427e-b2e0-34a521e34ad4",
+          "body": "{\n  \"id\": \"{{urlParam 'media_id'}}\",\n  \"caption\": \"Our new product is live \u2014 tell us what you think!\",\n  \"media_type\": \"IMAGE\",\n  \"media_url\": \"https://example.com/media/sample.jpg\",\n  \"permalink\": \"https://www.instagram.com/p/ABC123xyz/\",\n  \"timestamp\": \"2026-08-20T14:00:00+0000\",\n  \"like_count\": 42,\n  \"comments_count\": 2,\n  \"username\": \"brand_account\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Media information",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "43a6553f-718a-4012-8e95-d9f93281a6f5",
+      "type": "http",
+      "documentation": "Instagram Get User Media",
+      "method": "get",
+      "endpoint": ":user_id/media",
+      "responses": [
+        {
+          "uuid": "e1398a1c-bb14-42b6-b80c-c0683d3befc2",
+          "body": "{\n  \"data\": [\n    {\n      \"id\": \"17841405309211841\",\n      \"caption\": \"Our new product is live \\u2014 tell us what you think!\",\n      \"media_type\": \"IMAGE\",\n      \"permalink\": \"https://www.instagram.com/p/SAMPLE1/\",\n      \"timestamp\": \"2026-08-11T14:00:00+0000\",\n      \"like_count\": 13,\n      \"comments_count\": 1,\n      \"username\": \"brand_account\"\n    },\n    {\n      \"id\": \"17841405309211842\",\n      \"caption\": \"Behind the scenes of launch week\",\n      \"media_type\": \"IMAGE\",\n      \"permalink\": \"https://www.instagram.com/p/SAMPLE2/\",\n      \"timestamp\": \"2026-08-12T14:00:00+0000\",\n      \"like_count\": 23,\n      \"comments_count\": 2,\n      \"username\": \"brand_account\"\n    },\n    {\n      \"id\": \"17841405309211843\",\n      \"caption\": \"Customer spotlight: thanks for the love\",\n      \"media_type\": \"IMAGE\",\n      \"permalink\": \"https://www.instagram.com/p/SAMPLE3/\",\n      \"timestamp\": \"2026-08-13T14:00:00+0000\",\n      \"like_count\": 33,\n      \"comments_count\": 3,\n      \"username\": \"brand_account\"\n    },\n    {\n      \"id\": \"17841405309211844\",\n      \"caption\": \"Weekend vibes from the studio\",\n      \"media_type\": \"IMAGE\",\n      \"permalink\": \"https://www.instagram.com/p/SAMPLE4/\",\n      \"timestamp\": \"2026-08-14T14:00:00+0000\",\n      \"like_count\": 43,\n      \"comments_count\": 4,\n      \"username\": \"brand_account\"\n    },\n    {\n      \"id\": \"17841405309211845\",\n      \"caption\": \"Shipping update: orders are out\",\n      \"media_type\": \"IMAGE\",\n      \"permalink\": \"https://www.instagram.com/p/SAMPLE5/\",\n      \"timestamp\": \"2026-08-15T14:00:00+0000\",\n      \"like_count\": 53,\n      \"comments_count\": 5,\n      \"username\": \"brand_account\"\n    }\n  ],\n  \"paging\": {\n    \"cursors\": {\n      \"before\": \"BEFORE\",\n      \"after\": \"AFTER\"\n    }\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "List of media objects.",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "m3d1a000-1111-4222-8333-444455556677"
+    },
+    {
+      "type": "route",
+      "uuid": "0171ed27-b25b-4322-8b2e-1f0db53c2d41"
+    },
+    {
+      "type": "route",
+      "uuid": "4f369761-4b06-45fa-b8d1-c36d01a8abaa"
+    },
+    {
+      "type": "route",
+      "uuid": "50e80055-ec41-44fb-959e-53d69e7a385f"
+    },
+    {
+      "type": "route",
+      "uuid": "ec196b6b-0929-48f4-9fc3-fc6e64a24c85"
+    },
+    {
+      "type": "route",
+      "uuid": "8adac701-3050-4703-83b3-0c41a6911e03"
+    },
+    {
+      "type": "route",
+      "uuid": "5ef1cffb-5470-43ab-8b54-5a41a87ad0d4"
+    },
+    {
+      "type": "route",
+      "uuid": "364b91ee-ac31-41e6-9a9a-665d40a82e19"
+    },
+    {
+      "type": "route",
+      "uuid": "02401167-3d56-4d4a-b803-f5f422e9deaa"
+    },
+    {
+      "type": "route",
+      "uuid": "43a6553f-718a-4012-8e95-d9f93281a6f5"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [],
+  "callbacks": []
+}

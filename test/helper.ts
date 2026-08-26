@@ -1,5 +1,6 @@
 import Fastify from 'fastify'
 import type { FastifyInstance } from 'fastify'
+import '../src/config/env.js'
 import App from '../src/app.js'
 
 /** Same app as production — only env (`.env.test`) differs. */

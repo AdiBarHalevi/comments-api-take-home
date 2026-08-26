@@ -1,10 +1,14 @@
 import type { PaginatedResponse } from '../types/pagination.js'
 
-export function buildPaginationResult<T>(
-  items: T[],
-  offset: number,
+export function buildPaginationResult<T>({
+  items,
+  offset,
+  limit
+}: {
+  items: T[]
+  offset: number
   limit: number
-): PaginatedResponse<T> {
+}): PaginatedResponse<T> {
   const hasMore = items.length > limit
   const data = hasMore ? items.slice(0, limit) : items
 

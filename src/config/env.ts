@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),
+  REDIS_URL: z.string().min(1),
 
   IG_EXTERNAL_ACCOUNT_ID: z.string().min(1),
   IG_USERNAME: z.string().min(1),

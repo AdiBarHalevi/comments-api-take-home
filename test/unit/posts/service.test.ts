@@ -1,5 +1,5 @@
 import { listPosts } from '../../../src/posts/service.js'
-import { createMockPrisma, makePost } from './fixtures.js'
+import { createMockPrisma, createMockRequest, makePost } from './fixtures.js'
 
 describe('listPosts', () => {
   it('returns empty page with defaults when no posts exist', async () => {
@@ -11,7 +11,10 @@ describe('listPosts', () => {
       }
     })
 
-    const result = await listPosts(prisma, {})
+    const result = await listPosts({
+      request: createMockRequest({ prisma }),
+      query: {}
+    })
 
     expect(result).toEqual({
       data: [],
@@ -41,7 +44,10 @@ describe('listPosts', () => {
       ]
     })
 
-    const result = await listPosts(prisma, { limit: 10 })
+    const result = await listPosts({
+      request: createMockRequest({ prisma }),
+      query: { limit: 10 }
+    })
 
     expect(result).toEqual({
       data: [
@@ -71,7 +77,10 @@ describe('listPosts', () => {
       ]
     })
 
-    const result = await listPosts(prisma, { offset: 0, limit: 2 })
+    const result = await listPosts({
+      request: createMockRequest({ prisma }),
+      query: { offset: 0, limit: 2 }
+    })
 
     expect(result.data).toHaveLength(2)
     expect(result.pagination).toEqual({ nextOffset: 2 })
@@ -86,7 +95,10 @@ describe('listPosts', () => {
       }
     })
 
-    await listPosts(prisma, { offset: 10, limit: 5 })
+    await listPosts({
+      request: createMockRequest({ prisma }),
+      query: { offset: 10, limit: 5 }
+    })
 
     expect(capturedArgs).toEqual({
       orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
@@ -104,7 +116,10 @@ describe('listPosts', () => {
       }
     })
 
-    await listPosts(prisma, { sortBy: 'id', sortOrder: 'desc' })
+    await listPosts({
+      request: createMockRequest({ prisma }),
+      query: { sortBy: 'id', sortOrder: 'desc' }
+    })
 
     expect(capturedArgs).toEqual({
       orderBy: [{ id: 'desc' }],
@@ -122,7 +137,10 @@ describe('listPosts', () => {
       }
     })
 
-    await listPosts(prisma, { sortBy: 'platform', sortOrder: 'desc' })
+    await listPosts({
+      request: createMockRequest({ prisma }),
+      query: { sortBy: 'platform', sortOrder: 'desc' }
+    })
 
     expect(capturedArgs).toEqual({
       orderBy: [{ platform: 'desc' }, { id: 'desc' }],

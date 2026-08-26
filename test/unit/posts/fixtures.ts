@@ -1,4 +1,6 @@
+import type { FastifyInstance } from 'fastify'
 import type { Platform, Post, PrismaClient } from '../../../src/generated/prisma/client.js'
+import type { AppRequest } from '../../../src/types/request.js'
 
 export type PostFixture = {
   id?: string
@@ -16,6 +18,18 @@ export function createMockPrisma(overrides: {
       findMany: overrides.findMany ?? (async () => [])
     }
   } as unknown as PrismaClient
+}
+
+export function createMockRequest<T extends object = object>({
+  prisma,
+  ...rest
+}: {
+  prisma: PrismaClient
+} & T): AppRequest & T {
+  return {
+    ...rest,
+    server: { prisma } as unknown as FastifyInstance
+  } as AppRequest & T
 }
 
 export function makePost(overrides: Partial<Post> & Pick<Post, 'platform' | 'externalId'>): Post {

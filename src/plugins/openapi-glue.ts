@@ -9,13 +9,13 @@ export default fp(
     await fastify.register(openapiGlue, {
       specification: join(process.cwd(), 'docs', 'openapi.json'),
       serviceHandlers: {
-        ...createPostsHandlers(fastify.prisma),
-        ...createCommentsHandlers(fastify.prisma)
+        ...createPostsHandlers(),
+        ...createCommentsHandlers()
       }
     })
   },
   {
     name: 'openapi-glue',
-    dependencies: ['prisma']
+    dependencies: ['prisma', 'queue']
   }
 )

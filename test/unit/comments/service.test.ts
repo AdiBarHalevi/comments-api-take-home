@@ -1,32 +1,31 @@
-import { listCommentsByPostId } from '../../../src/comments/service.js'
-import { createMockPrisma, makeComment, makePost } from './fixtures.js'
+import {
+  createReplyByCommentId,
+  getCommentById,
+  listCommentsByPostId
+} from '../../../src/comments/service.js'
+import {
+  createMockPrisma,
+  createMockRequest,
+  makeComment,
+  makePost
+} from './fixtures.js'
 
 describe('listCommentsByPostId', () => {
-  it('throws 404 when the post does not exist', async () => {
-    const prisma = createMockPrisma({
-      findUniquePost: async () => null
-    })
-
-    await expect(
-      listCommentsByPostId(prisma, '11111111-1111-1111-1111-111111111111', {})
-    ).rejects.toMatchObject({
-      message: 'Post not found',
-      statusCode: 404
-    })
-  })
-
   it('returns empty page when the post has no comments', async () => {
     const post = makePost()
     let capturedArgs: unknown
     const prisma = createMockPrisma({
-      findUniquePost: async () => post,
       findManyComments: async (args) => {
         capturedArgs = args
         return []
       }
     })
 
-    const result = await listCommentsByPostId(prisma, post.id, {})
+    const result = await listCommentsByPostId({
+      request: createMockRequest({ prisma }),
+      postId: post.id,
+      query: {}
+    })
 
     expect(result).toEqual({
       data: [],
@@ -43,7 +42,6 @@ describe('listCommentsByPostId', () => {
   it('maps comments and sets nextOffset when more exist', async () => {
     const post = makePost()
     const prisma = createMockPrisma({
-      findUniquePost: async () => post,
       findManyComments: async () => [
         makeComment({ id: '1', externalId: 'a', text: 'one' }),
         makeComment({ id: '2', externalId: 'b', text: 'two' }),
@@ -51,9 +49,10 @@ describe('listCommentsByPostId', () => {
       ]
     })
 
-    const result = await listCommentsByPostId(prisma, post.id, {
-      offset: 0,
-      limit: 2
+    const result = await listCommentsByPostId({
+      request: createMockRequest({ prisma }),
+      postId: post.id,
+      query: { offset: 0, limit: 2 }
     })
 
     expect(result.data).toHaveLength(2)
@@ -67,5 +66,119 @@ describe('listCommentsByPostId', () => {
       lastError: null
     })
     expect(result.pagination).toEqual({ nextOffset: 2 })
+  })
+})
+
+describe('getCommentById', () => {
+  it('maps a comment to the response shape', () => {
+    const comment = makeComment({ status: 'PENDING', externalId: null })
+
+    expect(getCommentById({ comment })).toEqual({
+      id: comment.id,
+      externalId: null,
+      text: comment.text,
+      parentId: null,
+      authorUsername: 'fan_account',
+      status: 'PENDING',
+      lastError: null
+    })
+  })
+})
+
+describe('createReplyByCommentId', () => {
+  it('creates a PENDING comment and enqueues work via callbacks', async () => {
+    const post = makePost()
+    const parent = {
+      ...makeComment({ postId: post.id }),
+      externalId: 'comment-1',
+      post
+    }
+    const created = makeComment({
+      id: '33333333-3333-3333-3333-333333333333',
+      postId: post.id,
+      parentId: parent.id,
+      text: 'Thanks!',
+      status: 'PENDING',
+      externalId: null,
+      authorUsername: 'brand_account'
+    })
+    const enqueued: string[] = []
+    const prisma = createMockPrisma({
+      createComment: async () => created
+    })
+
+    const result = await createReplyByCommentId({
+      request: createMockRequest({
+        prisma,
+        enqueue: async ({ jobId, run }) => {
+          enqueued.push(jobId)
+          // Do not run platform sync in this unit test.
+          void run
+        }
+      }),
+      parent,
+      text: 'Thanks!'
+    })
+
+    expect(result).toEqual({
+      id: created.id,
+      status: 'PENDING',
+      text: 'Thanks!',
+      parentId: parent.id
+    })
+    expect(enqueued).toEqual([created.id])
+  })
+
+  it('marks FAILED and returns 503 when enqueue fails', async () => {
+    const post = makePost()
+    const parent = {
+      ...makeComment({ postId: post.id }),
+      externalId: 'comment-1',
+      post
+    }
+    const created = makeComment({
+      id: '33333333-3333-3333-3333-333333333333',
+      postId: post.id,
+      parentId: parent.id,
+      text: 'Thanks!',
+      status: 'PENDING',
+      externalId: null
+    })
+    let updated: unknown
+    const prisma = createMockPrisma({
+      createComment: async () => created,
+      updateComment: async (args) => {
+        updated = args
+        return { ...created, status: 'FAILED', lastError: 'Queue unavailable' }
+      }
+    })
+
+    // markOutboundReplyFailed uses updateMany — extend mock
+    ;(prisma.comment as { updateMany: (args: unknown) => Promise<unknown> }).updateMany =
+      async (args) => {
+        updated = args
+        return { count: 1 }
+      }
+
+    await expect(
+      createReplyByCommentId({
+        request: createMockRequest({
+          prisma,
+          enqueue: async () => {
+            throw new Error('redis down')
+          }
+        }),
+        parent,
+        text: 'Thanks!'
+      })
+    ).rejects.toMatchObject({
+      message: 'Queue unavailable',
+      statusCode: 503
+    })
+
+    expect(updated).toEqual({
+      where: { id: created.id, status: 'PENDING' },
+      data: { status: 'FAILED', lastError: 'Queue unavailable' }
+    })
   })
 })

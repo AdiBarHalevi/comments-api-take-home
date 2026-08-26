@@ -12,3 +12,14 @@ export type CommentResponse = {
 }
 
 export type ListCommentsByPostIdRequest = PaginatedRequest
+
+export type CreateReplyByCommentIdRequest = {
+  text: string
+}
+
+export type CreateReplyByCommentIdResponse = {
+  id: string
+  status: CommentStatus
+  text: string
+  parentId: string
+}

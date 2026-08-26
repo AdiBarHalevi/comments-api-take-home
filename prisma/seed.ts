@@ -1,8 +1,8 @@
 import { env } from '../src/config/env.js'
 import { getStaticPlatformUser } from '../src/config/staticPlatformUser.js'
 import { createPrismaClient } from '../src/lib/prisma.js'
-import { listInstagramPosts } from '../src/platforms/instagram.js'
-import { listXPosts } from '../src/platforms/x.js'
+import { listInstagramPosts } from '../src/lib/clients/instagram.js'
+import { listXPosts } from '../src/lib/clients/x.js'
 
 const POSTS_PER_PLATFORM = 5
 
@@ -11,8 +11,14 @@ async function seed(): Promise<void> {
 
   try {
     const [instagramPosts, xPosts] = await Promise.all([
-      listInstagramPosts(getStaticPlatformUser('instagram'), POSTS_PER_PLATFORM),
-      listXPosts(getStaticPlatformUser('x'), POSTS_PER_PLATFORM)
+      listInstagramPosts({
+        user: getStaticPlatformUser('instagram'),
+        limit: POSTS_PER_PLATFORM
+      }),
+      listXPosts({
+        user: getStaticPlatformUser('x'),
+        limit: POSTS_PER_PLATFORM
+      })
     ])
 
     const mappings = [

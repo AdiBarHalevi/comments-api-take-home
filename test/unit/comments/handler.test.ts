@@ -16,20 +16,7 @@ import {
 describe('createCommentsHandlers', () => {
   const handlers = createCommentsHandlers()
 
-  it('getCommentsByPostId throws 404 when the post does not exist', async () => {
-    const request = createMockRequest({
-      prisma: createMockPrisma({ findUniquePost: async () => null }),
-      params: { postId: '11111111-1111-1111-1111-111111111111' },
-      query: {}
-    })
-
-    await expect(handlers.getCommentsByPostId(request)).rejects.toMatchObject({
-      message: 'Post not found',
-      statusCode: 404
-    })
-  })
-
-  it('getCommentsByPostId delegates to the service after validating the post', async () => {
+  it('getCommentsByPostId delegates to the service', async () => {
     const post = makePost()
     const request = createMockRequest({
       prisma: createMockPrisma({
@@ -53,48 +40,7 @@ describe('createCommentsHandlers', () => {
     expect(result.pagination.nextOffset).toBeNull()
   })
 
-  it('createReplyByCommentId throws 404 when the parent does not exist', async () => {
-    const request = createMockRequest({
-      prisma: createMockPrisma({ findUniqueComment: async () => null }),
-      params: { commentId: '22222222-2222-2222-2222-222222222222' },
-      body: { text: 'Thanks!' } satisfies CreateReplyByCommentIdRequest
-    })
-    const reply = {
-      code: jest.fn().mockReturnThis(),
-      send: jest.fn()
-    } as unknown as FastifyReply
-
-    await expect(
-      handlers.createReplyByCommentId(request, reply)
-    ).rejects.toMatchObject({
-      message: 'Comment not found',
-      statusCode: 404
-    })
-  })
-
-  it('createReplyByCommentId throws 400 when the parent has no externalId', async () => {
-    const post = makePost()
-    const parent = makeComment({ externalId: null, postId: post.id })
-    const request = createMockRequest({
-      prisma: createMockPrisma({
-        findUniqueComment: async () => ({ ...parent, post })
-      }),
-      params: { commentId: parent.id },
-      body: { text: 'Thanks!' } satisfies CreateReplyByCommentIdRequest
-    })
-    const reply = {
-      code: jest.fn().mockReturnThis(),
-      send: jest.fn()
-    } as unknown as FastifyReply
-
-    await expect(
-      handlers.createReplyByCommentId(request, reply)
-    ).rejects.toMatchObject({
-      statusCode: 400
-    })
-  })
-
-  it('createReplyByCommentId returns 202 after validating the parent', async () => {
+  it('createReplyByCommentId returns 202 after the service accepts the reply', async () => {
     const post = makePost()
     const parent = makeComment({ postId: post.id })
     const created = makeComment({

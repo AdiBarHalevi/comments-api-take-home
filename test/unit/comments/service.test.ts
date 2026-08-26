@@ -10,10 +10,28 @@ import {
 } from './fixtures.js'
 
 describe('listCommentsByPostId', () => {
+  it('throws 404 when the post does not exist', async () => {
+    const prisma = createMockPrisma({
+      findUniquePost: async () => null
+    })
+
+    await expect(
+      listCommentsByPostId({
+        request: createMockRequest({ prisma }),
+        postId: '11111111-1111-1111-1111-111111111111',
+        query: {}
+      })
+    ).rejects.toMatchObject({
+      message: 'Post not found',
+      statusCode: 404
+    })
+  })
+
   it('returns empty page when the post has no comments', async () => {
     const post = makePost()
     let capturedArgs: unknown
     const prisma = createMockPrisma({
+      findUniquePost: async () => post,
       findManyComments: async (args) => {
         capturedArgs = args
         return []
@@ -41,6 +59,7 @@ describe('listCommentsByPostId', () => {
   it('maps comments and sets nextOffset when more exist', async () => {
     const post = makePost()
     const prisma = createMockPrisma({
+      findUniquePost: async () => post,
       findManyComments: async () => [
         makeComment({ id: '1', externalId: 'a', text: 'one' }),
         makeComment({ id: '2', externalId: 'b', text: 'two' }),
@@ -69,13 +88,44 @@ describe('listCommentsByPostId', () => {
 })
 
 describe('createReplyByCommentId', () => {
+  it('throws 404 when the parent does not exist', async () => {
+    const prisma = createMockPrisma({
+      findUniqueComment: async () => null
+    })
+
+    await expect(
+      createReplyByCommentId({
+        request: createMockRequest({ prisma }),
+        commentId: '22222222-2222-2222-2222-222222222222',
+        text: 'Thanks!'
+      })
+    ).rejects.toMatchObject({
+      message: 'Comment not found',
+      statusCode: 404
+    })
+  })
+
+  it('throws 400 when the parent has no externalId', async () => {
+    const post = makePost()
+    const parent = makeComment({ externalId: null, postId: post.id })
+    const prisma = createMockPrisma({
+      findUniqueComment: async () => ({ ...parent, post })
+    })
+
+    await expect(
+      createReplyByCommentId({
+        request: createMockRequest({ prisma }),
+        commentId: parent.id,
+        text: 'Thanks!'
+      })
+    ).rejects.toMatchObject({
+      statusCode: 400
+    })
+  })
+
   it('creates a PENDING comment and enqueues work via callbacks', async () => {
     const post = makePost()
-    const parent = {
-      ...makeComment({ postId: post.id }),
-      externalId: 'comment-1',
-      post
-    }
+    const parent = makeComment({ postId: post.id })
     const created = makeComment({
       id: '33333333-3333-3333-3333-333333333333',
       postId: post.id,
@@ -87,6 +137,7 @@ describe('createReplyByCommentId', () => {
     })
     const enqueued: string[] = []
     const prisma = createMockPrisma({
+      findUniqueComment: async () => ({ ...parent, post }),
       createComment: async () => created
     })
 
@@ -95,11 +146,10 @@ describe('createReplyByCommentId', () => {
         prisma,
         enqueue: async ({ jobId, run }) => {
           enqueued.push(jobId)
-          // Do not run platform sync in this unit test.
           void run
         }
       }),
-      parent,
+      commentId: parent.id,
       text: 'Thanks!'
     })
 
@@ -114,11 +164,7 @@ describe('createReplyByCommentId', () => {
 
   it('marks FAILED and returns 503 when enqueue fails', async () => {
     const post = makePost()
-    const parent = {
-      ...makeComment({ postId: post.id }),
-      externalId: 'comment-1',
-      post
-    }
+    const parent = makeComment({ postId: post.id })
     const created = makeComment({
       id: '33333333-3333-3333-3333-333333333333',
       postId: post.id,
@@ -129,6 +175,7 @@ describe('createReplyByCommentId', () => {
     })
     let updated: unknown
     const prisma = createMockPrisma({
+      findUniqueComment: async () => ({ ...parent, post }),
       createComment: async () => created,
       updateComment: async (args) => {
         updated = args
@@ -152,7 +199,7 @@ describe('createReplyByCommentId', () => {
             throw new Error('redis down')
           }
         }),
-        parent,
+        commentId: parent.id,
         text: 'Thanks!'
       })
     ).rejects.toMatchObject({

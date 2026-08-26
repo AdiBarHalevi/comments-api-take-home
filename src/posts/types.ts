@@ -4,7 +4,6 @@ export type PostResponse = {
   id: string
   platform: 'INSTAGRAM' | 'X'
   externalId: string
-  isActive: boolean
 }
 
 export type ListPostsRequest = PaginatedRequest & {

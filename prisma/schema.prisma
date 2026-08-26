@@ -24,7 +24,6 @@ model Post {
   updatedAt  DateTime  @updatedAt @map("updated_at")
   externalId String    @map("external_id")
   platform   Platform
-  isActive   Boolean   @default(true) @map("is_active")
   comments   Comment[]
 
   @@unique([platform, externalId])
@@ -39,7 +38,6 @@ model Comment {
   text             String?
   authorUsername   String?        @map("author_username")
   authorExternalId String?        @map("author_external_id")
-  isActive         Boolean        @default(true) @map("is_active")
   status           CommentStatus?
   lastError        String?        @map("last_error")
 

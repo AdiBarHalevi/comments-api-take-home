@@ -61,7 +61,6 @@ function toPostResponse(post: Post): PostResponse {
   return {
     id: post.id,
     platform: post.platform,
-    externalId: post.externalId,
-    isActive: post.isActive
+    externalId: post.externalId
   }
 }

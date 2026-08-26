@@ -61,8 +61,7 @@ export function makePost(overrides: Partial<Post> = {}): Post {
     createdAt: overrides.createdAt ?? now,
     updatedAt: overrides.updatedAt ?? now,
     externalId: overrides.externalId ?? 'ig-1',
-    platform: overrides.platform ?? 'INSTAGRAM',
-    isActive: overrides.isActive ?? true
+    platform: overrides.platform ?? 'INSTAGRAM'
   }
 }
 
@@ -76,7 +75,6 @@ export function makeComment(overrides: Partial<Comment> = {}): Comment {
     text: overrides.text ?? 'Nice post!',
     authorUsername: overrides.authorUsername ?? 'fan_account',
     authorExternalId: overrides.authorExternalId ?? 'author-1',
-    isActive: overrides.isActive ?? true,
     status: 'status' in overrides ? overrides.status! : null,
     lastError: 'lastError' in overrides ? overrides.lastError! : null,
     postId: overrides.postId ?? '11111111-1111-1111-1111-111111111111',

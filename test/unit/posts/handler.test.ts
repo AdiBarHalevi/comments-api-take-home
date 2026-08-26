@@ -30,8 +30,7 @@ describe('createPostsHandlers', () => {
         {
           id: '440e8400-e29b-41d4-a716-446655440000',
           platform: 'X',
-          externalId: 'tweet-1',
-          isActive: true
+          externalId: 'tweet-1'
         }
       ],
       pagination: { nextOffset: null }

@@ -1,8 +1,9 @@
-import type { Comment, Platform, Post } from '../generated/prisma/client.js'
+import type { Comment, Platform } from '../generated/prisma/client.js'
 import { getStaticPlatformUser } from '../config/staticPlatformUser.js'
 import { createInstagramClient } from '../lib/clients/instagram.js'
 import type { PlatformClients } from '../lib/clients/types.js'
 import { createXClient } from '../lib/clients/x.js'
+import { httpError } from '../lib/httpError.js'
 import { buildPaginationResult } from '../lib/pagination.js'
 import { createQueuedResponse } from '../queue/queuedResponse.js'
 import type { PaginatedResponse } from '../types/pagination.js'
@@ -16,12 +17,6 @@ import type {
   CreateReplyByCommentIdResponse,
   ListCommentsByPostIdRequest
 } from './types.js'
-
-/** Parent comment already validated by the handler (exists + has platform id). */
-export type ValidatedParentComment = Comment & {
-  externalId: string
-  post: Pick<Post, 'platform'>
-}
 
 const platformClients: PlatformClients = {
   INSTAGRAM: createInstagramClient(getStaticPlatformUser('instagram')),
@@ -38,6 +33,12 @@ export async function listCommentsByPostId({
   query: ListCommentsByPostIdRequest
 }): Promise<PaginatedResponse<CommentResponse>> {
   const { prisma } = request.server
+
+  const post = await prisma.post.findUnique({ where: { id: postId } })
+  if (!post) {
+    throw httpError(404, 'Post not found')
+  }
+
   const offset = query.offset ?? 0
   const limit = query.limit ?? 50
 
@@ -65,14 +66,29 @@ export async function listCommentsByPostId({
 
 export async function createReplyByCommentId({
   request,
-  parent,
+  commentId,
   text
 }: {
   request: AppRequest
-  parent: ValidatedParentComment
+  commentId: string
   text: string
 }): Promise<CreateReplyByCommentIdResponse> {
   const { prisma, enqueue } = request.server
+
+  const parent = await prisma.comment.findUnique({
+    where: { id: commentId },
+    include: { post: true }
+  })
+  if (!parent) {
+    throw httpError(404, 'Comment not found')
+  }
+  if (!parent.externalId) {
+    throw httpError(
+      400,
+      'Parent comment is not synced to a platform and cannot be replied to'
+    )
+  }
+
   const authorUsername = authorUsernameForPlatform(parent.post.platform)
 
   const pending = await createQueuedResponse({

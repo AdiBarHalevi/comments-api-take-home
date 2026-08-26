@@ -34,7 +34,6 @@ model Post {
   updatedAt  DateTime @updatedAt @map("updated_at")
   externalId String   @map("external_id") // platform post / media / tweet id
   platform   Platform
-  isActive   Boolean  @default(true) @map("is_active")
   comments   Comment[]
 
   @@unique([platform, externalId])
@@ -49,7 +48,6 @@ model Comment {
   text             String?
   authorUsername   String?        @map("author_username")
   authorExternalId String?        @map("author_external_id")
-  isActive         Boolean        @default(true) @map("is_active")
   status           CommentStatus? // only outbound replies we create; null for platform comments
   lastError        String?        @map("last_error")
 

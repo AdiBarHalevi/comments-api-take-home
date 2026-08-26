@@ -1,9 +1,6 @@
 export type JobData = {
-  jobId: string
+  commentId: string
 }
 
-export type EnqueueJob = (args: {
-  jobId: string
-  run: () => Promise<void>
-  onFailed?: (error: Error) => Promise<void>
-}) => Promise<void>
+/** Enqueue a durable outbound-reply job. Work is recovered from the DB by id. */
+export type EnqueueJob = (args: { commentId: string }) => Promise<void>

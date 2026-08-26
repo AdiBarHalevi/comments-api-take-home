@@ -134,10 +134,10 @@ Outbound replies are **async** (`202`). The local `PENDING` `Comment` is a durab
 
 1. Load parent `Comment` by **local** `:commentId` (must have a platform `externalId`, or 400).
 2. Insert local `Comment` with `parentId = :commentId`, `postId = parent.postId`, `status = PENDING`.
-3. **Enqueue** outbound job (BullMQ / Redis). Use the comment `id` as the BullMQ `jobId`.
+3. **Enqueue** outbound job (BullMQ / Redis) with durable payload `{ commentId }` (`jobId` = that id).
    - **Success** → return `202` with the `PENDING` acknowledgment.
    - **Persistent enqueue failure** → update comment to `status = FAILED`, set `lastError`, return **`503 Service Unavailable`**.
-4. Worker calls `platformClient.createReply(parent.externalId, text)`.
+4. Worker loads the comment by id, calls `platformClient.createReply(parent.externalId, text)`.
 5. On success → `status = SYNCED`, store platform `externalId`.
 6. On worker failure → BullMQ retries with backoff; after max attempts → `status = FAILED`, store `lastError`.
 
@@ -178,6 +178,9 @@ Seed uses separate platform helpers (`listInstagramPosts` / `listXPosts`) to boo
 ## Outbound reply queue
 
 - One queue for **create reply** jobs (not a general event bus for v1).
+- Job payload is durable: only `{ commentId }` (BullMQ `jobId` = that id). The worker
+  reloads the `PENDING` comment from Postgres and calls the platform client — no
+  in-process closures, so a restarted API process can still finish the job.
 - Retries: exponential backoff, capped attempts.
 - Mockoon latency / error responses exercise this path locally.
 
@@ -189,7 +192,7 @@ Insert and enqueue are two steps (Postgres vs Redis). Immediate enqueue failures
 const comment = await db.comment.create({ status: 'PENDING', ... })
 
 try {
-  await enqueue(/* jobId = comment.id */)
+  await enqueue({ commentId: comment.id })
 } catch {
   await db.comment.update({
     where: { id: comment.id },

@@ -1,28 +1,16 @@
 import type { Comment, Platform } from '../generated/prisma/client.js'
 import { getStaticPlatformUser } from '../config/staticPlatformUser.js'
-import { createInstagramClient } from '../lib/clients/instagram.js'
-import type { PlatformClients } from '../lib/clients/types.js'
-import { createXClient } from '../lib/clients/x.js'
 import { httpError } from '../lib/httpError.js'
 import { buildPaginationResult } from '../lib/pagination.js'
 import { createQueuedResponse } from '../queue/queuedResponse.js'
 import type { PaginatedResponse } from '../types/pagination.js'
 import type { AppRequest } from '../types/request.js'
-import {
-  markOutboundReplyFailed,
-  syncOutboundReply
-} from './syncOutboundReply.js'
+import { markOutboundReplyFailed } from './syncOutboundReply.js'
 import type {
   CommentResponse,
   CreateReplyByCommentIdResponse,
   ListCommentsByPostIdRequest
 } from './types.js'
-
-const platformClients: PlatformClients = {
-  INSTAGRAM: createInstagramClient(getStaticPlatformUser('instagram')),
-  X: createXClient(getStaticPlatformUser('x'))
-}
-
 export async function listCommentsByPostId({
   request,
   postId,
@@ -102,18 +90,6 @@ export async function createReplyByCommentId({
           status: 'PENDING',
           authorUsername
         }
-      }),
-    run: (comment) =>
-      syncOutboundReply({
-        prisma,
-        platformClients,
-        commentId: comment.id
-      }),
-    onFailed: ({ pending: comment, error }) =>
-      markOutboundReplyFailed({
-        prisma,
-        commentId: comment.id,
-        lastError: error.message
       }),
     onEnqueueFailed: (comment) =>
       markOutboundReplyFailed({

@@ -23,6 +23,9 @@ jobs:
 
       - name: Generate Prisma client
         run: npm run db:generate
+        env:
+          # prisma.config.ts requires DATABASE_URL; generate does not connect
+          DATABASE_URL: postgresql://comments:comments@127.0.0.1:5432/comments_test?schema=public
 
       - name: Unit tests
         run: npm run test:unit

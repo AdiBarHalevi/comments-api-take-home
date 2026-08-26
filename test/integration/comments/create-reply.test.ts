@@ -115,7 +115,9 @@ describe('POST /comments/:commentId/replies', () => {
     createdPostIds.length = 0
   })
 
-  async function createParentComment(platform: 'INSTAGRAM' | 'X' = 'INSTAGRAM') {
+  async function createParentComment(
+    platform: 'INSTAGRAM' | 'X' = 'INSTAGRAM'
+  ) {
     const post = await prisma.post.create({
       data: {
         id: randomUUID(),
@@ -136,77 +138,69 @@ describe('POST /comments/:commentId/replies', () => {
     })
   }
 
-  it(
-    'returns 202, enqueues work, and the worker marks the reply SYNCED',
-    async () => {
-      const parent = await createParentComment('INSTAGRAM')
+  it('returns 202, enqueues work, and the worker marks the reply SYNCED', async () => {
+    const parent = await createParentComment('INSTAGRAM')
 
-      const res = await app.inject({
-        method: 'POST',
-        url: `/comments/${parent.id}/replies`,
-        payload: { text: 'Thanks!' }
-      })
+    const res = await app.inject({
+      method: 'POST',
+      url: `/comments/${parent.id}/replies`,
+      payload: { text: 'Thanks!' }
+    })
 
-      expect(res.statusCode).toBe(202)
-      const body = JSON.parse(res.payload)
-      expect(body).toEqual({
-        id: expect.any(String),
-        status: 'PENDING',
-        text: 'Thanks!',
-        parentId: parent.id
-      })
+    expect(res.statusCode).toBe(202)
+    const body = JSON.parse(res.payload)
+    expect(body).toEqual({
+      id: expect.any(String),
+      status: 'PENDING',
+      text: 'Thanks!',
+      parentId: parent.id
+    })
 
-      const synced = await waitForCommentStatus({
-        prisma,
-        commentId: body.id,
-        statuses: ['SYNCED']
-      })
+    const synced = await waitForCommentStatus({
+      prisma,
+      commentId: body.id,
+      statuses: ['SYNCED']
+    })
 
-      expect(synced).toMatchObject({
-        id: body.id,
-        status: 'SYNCED',
-        text: 'Thanks!',
-        parentId: parent.id,
-        externalId: 'ig-ext-reply-123',
-        lastError: null
-      })
+    expect(synced).toMatchObject({
+      id: body.id,
+      status: 'SYNCED',
+      text: 'Thanks!',
+      parentId: parent.id,
+      externalId: 'ig-ext-reply-123',
+      lastError: null
+    })
 
-      expect(globalThis.fetch).toHaveBeenCalled()
-      const fetchMock = globalThis.fetch as jest.MockedFunction<typeof fetch>
-      const [calledUrl, calledInit] = fetchMock.mock.calls[0]!
-      expect(String(calledUrl)).toContain(`/${parent.externalId}/replies`)
-      expect(calledInit?.method).toBe('POST')
-    },
-    15_000
-  )
+    expect(globalThis.fetch).toHaveBeenCalled()
+    const fetchMock = globalThis.fetch as jest.MockedFunction<typeof fetch>
+    const [calledUrl, calledInit] = fetchMock.mock.calls[0]!
+    expect(String(calledUrl)).toContain(`/${parent.externalId}/replies`)
+    expect(calledInit?.method).toBe('POST')
+  }, 15_000)
 
-  it(
-    'syncs X replies through the queue as well',
-    async () => {
-      const parent = await createParentComment('X')
+  it('syncs X replies through the queue as well', async () => {
+    const parent = await createParentComment('X')
 
-      const res = await app.inject({
-        method: 'POST',
-        url: `/comments/${parent.id}/replies`,
-        payload: { text: 'Appreciate it!' }
-      })
-      expect(res.statusCode).toBe(202)
-      const { id } = JSON.parse(res.payload) as { id: string }
+    const res = await app.inject({
+      method: 'POST',
+      url: `/comments/${parent.id}/replies`,
+      payload: { text: 'Appreciate it!' }
+    })
+    expect(res.statusCode).toBe(202)
+    const { id } = JSON.parse(res.payload) as { id: string }
 
-      const synced = await waitForCommentStatus({
-        prisma,
-        commentId: id,
-        statuses: ['SYNCED']
-      })
+    const synced = await waitForCommentStatus({
+      prisma,
+      commentId: id,
+      statuses: ['SYNCED']
+    })
 
-      expect(synced).toMatchObject({
-        status: 'SYNCED',
-        externalId: 'x-ext-reply-456',
-        text: 'Appreciate it!'
-      })
-    },
-    15_000
-  )
+    expect(synced).toMatchObject({
+      status: 'SYNCED',
+      externalId: 'x-ext-reply-456',
+      text: 'Appreciate it!'
+    })
+  }, 15_000)
 
   it('returns 404 when the parent comment does not exist', async () => {
     const res = await app.inject({

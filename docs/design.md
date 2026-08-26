@@ -208,11 +208,11 @@ try {
 
 ## Consistency model (v1)
 
-| Path              | Behavior                                                                                                                     |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| **Read** comments | Serve local top-level comments for the post (seeded / previously synced).                                                    |
+| Path              | Behavior                                                                                                                      |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Read** comments | Serve local top-level comments for the post (seeded / previously synced).                                                     |
 | **Create reply**  | Load parent → insert outbound `Comment` (`PENDING`) → queue → platform → `SYNCED` / `FAILED`. Client gets `202` and moves on. |
-| **Post mapping**  | `Post` rows link our API ids to platform post ids.                                                                           |
+| **Post mapping**  | `Post` rows link our API ids to platform post ids.                                                                            |
 
 **What we store locally and why:**
 

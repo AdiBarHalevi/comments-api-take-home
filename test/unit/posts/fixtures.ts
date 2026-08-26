@@ -1,5 +1,9 @@
 import type { FastifyInstance } from 'fastify'
-import type { Platform, Post, PrismaClient } from '../../../src/generated/prisma/client.js'
+import type {
+  Platform,
+  Post,
+  PrismaClient
+} from '../../../src/generated/prisma/client.js'
 import type { AppRequest } from '../../../src/types/request.js'
 
 export type PostFixture = {
@@ -10,9 +14,11 @@ export type PostFixture = {
   createdAt?: Date
 }
 
-export function createMockPrisma(overrides: {
-  findMany?: (args: unknown) => Promise<Post[]>
-} = {}): PrismaClient {
+export function createMockPrisma(
+  overrides: {
+    findMany?: (args: unknown) => Promise<Post[]>
+  } = {}
+): PrismaClient {
   return {
     post: {
       findMany: overrides.findMany ?? (async () => [])
@@ -32,7 +38,9 @@ export function createMockRequest<T extends object = object>({
   } as AppRequest & T
 }
 
-export function makePost(overrides: Partial<Post> & Pick<Post, 'platform' | 'externalId'>): Post {
+export function makePost(
+  overrides: Partial<Post> & Pick<Post, 'platform' | 'externalId'>
+): Post {
   const now = new Date('2026-01-01T00:00:00.000Z')
   return {
     id: overrides.id ?? '440e8400-e29b-41d4-a716-446655440000',

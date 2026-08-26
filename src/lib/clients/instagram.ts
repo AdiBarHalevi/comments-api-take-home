@@ -1,5 +1,9 @@
 import type { StaticPlatformUser } from '../../config/staticPlatformUser.js'
-import type { CreateReplyResult, PlatformClient, PlatformPost } from './types.js'
+import type {
+  CreateReplyResult,
+  PlatformClient,
+  PlatformPost
+} from './types.js'
 
 interface InstagramMediaListResponse {
   data?: Array<{ id: string }>

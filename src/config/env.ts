@@ -1,5 +1,9 @@
-import 'dotenv/config'
+import { config as loadDotenv } from 'dotenv'
 import { z } from 'zod'
+
+// Prefer `dotenv` over `dotenv/config` — Jest ESM fails to link the latter when
+// @fastify/autoload dynamically imports plugins that pull in this module.
+loadDotenv()
 
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),

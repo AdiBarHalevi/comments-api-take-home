@@ -23,6 +23,8 @@ jobs:
 
       - name: Generate Prisma client
         run: npm run db:generate
+        env:
+          DOTENV_CONFIG_PATH: .env.test
 
       - name: Unit tests
         run: npm run test:unit

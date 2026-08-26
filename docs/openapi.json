@@ -327,7 +327,8 @@
       "CommentText": {
         "type": "string",
         "minLength": 1,
-        "description": "Comment or reply body text"
+        "maxLength": 2200,
+        "description": "Comment or reply body text. Absolute ceiling is Instagram's 2200-char limit; X replies are also capped at 280 in the service layer."
       },
       "CreateReplyByCommentIdRequest": {
         "type": "object",

@@ -160,15 +160,17 @@ interface PlatformClient {
 type PlatformClients = Record<Platform, PlatformClient>
 
 const platformClients: PlatformClients = {
-  INSTAGRAM: createInstagramClient(/* static account from env */),
-  X: createXClient(/* static account from env */)
+  INSTAGRAM: createInstagramClient(),
+  X: createXClient()
 }
 ```
 
-Seed uses separate platform helpers (`listInstagramPosts` / `listXPosts`) to bootstrap `Post` mappings. Outbound reply work only needs `createReply`.
+Each platform module creates its HTTP SDK client once at import time (static account from env). Seed uses `listInstagramPosts` / `listXPosts` to bootstrap `Post` mappings. Outbound reply work only needs `createReply`.
 
 - Routes stay thin; services load the parent/`Post`, pick the client, then call it.
 - Adding a platform later = new client + one registry entry — **no** REST route changes.
+- Platform HTTP uses a shared `createPlatformHttpClient` SDK (`get`/`post`, 10s timeout) that parses Graph/X error bodies into `PlatformHttpError` for worker `lastError`.
+- Reply text limits are enforced in the service before enqueue (X **280**, Instagram **2200**) so clients get `400` instead of a later `FAILED` row. OpenAPI `maxLength` is the absolute ceiling (2200).
 
 ## Resolving platform
 

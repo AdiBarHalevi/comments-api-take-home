@@ -1,4 +1,6 @@
-import type { StaticPlatformUser } from '../../config/staticPlatformUser.js'
+import { getStaticPlatformUser } from '../../config/staticPlatformUser.js'
+import { createPlatformHttpClient } from './http.js'
+import { X_REPLY_MAX_LENGTH } from './limits.js'
 import type {
   CreateReplyResult,
   PlatformClient,
@@ -13,62 +15,47 @@ interface XCreateTweetResponse {
   data?: { id?: string }
 }
 
+const user = getStaticPlatformUser('x')
+const http = createPlatformHttpClient({
+  platform: 'X',
+  baseUrl: user.apiBaseUrl,
+  defaultHeaders: {
+    Authorization: `Bearer ${user.accessToken}`
+  }
+})
+
 export async function listXPosts({
-  user,
   limit = 5
 }: {
-  user: StaticPlatformUser
   limit?: number
-}): Promise<PlatformPost[]> {
-  const url = new URL(
-    `${user.apiBaseUrl}/2/users/${user.externalAccountId}/tweets`
+} = {}): Promise<PlatformPost[]> {
+  const body = await http.get<XTweetsListResponse>(
+    `/2/users/${user.externalAccountId}/tweets`
   )
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${user.accessToken}`
-    }
-  })
-  if (!response.ok) {
-    throw new Error(
-      `X list posts failed: ${response.status} ${response.statusText}`
-    )
-  }
-
-  const body = (await response.json()) as XTweetsListResponse
   return (body.data ?? []).slice(0, limit).map((item) => ({
     externalId: item.id
   }))
 }
 
 export async function createXReply({
-  user,
   externalCommentId,
   text
 }: {
-  user: StaticPlatformUser
   externalCommentId: string
   text: string
 }): Promise<CreateReplyResult> {
-  const response = await fetch(`${user.apiBaseUrl}/2/tweets`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${user.accessToken}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      text,
-      reply: { in_reply_to_tweet_id: externalCommentId }
-    })
-  })
-
-  if (!response.ok) {
-    throw new Error(
-      `X create reply failed: ${response.status} ${response.statusText}`
-    )
+  if (text.length > X_REPLY_MAX_LENGTH) {
+    throw new Error(`X reply text exceeds ${X_REPLY_MAX_LENGTH} characters`)
   }
 
-  const body = (await response.json()) as XCreateTweetResponse
+  const body = await http.post<XCreateTweetResponse>('/2/tweets', {
+    json: {
+      text,
+      reply: { in_reply_to_tweet_id: externalCommentId }
+    }
+  })
+
   const externalId = body.data?.id
   if (!externalId) {
     throw new Error('X create reply failed: missing id in response')
@@ -77,9 +64,8 @@ export async function createXReply({
   return { externalId }
 }
 
-export function createXClient(user: StaticPlatformUser): PlatformClient {
+export function createXClient(): PlatformClient {
   return {
-    createReply: ({ externalCommentId, text }) =>
-      createXReply({ user, externalCommentId, text })
+    createReply: createXReply
   }
 }

@@ -123,6 +123,25 @@ describe('createReplyByCommentId', () => {
     })
   })
 
+  it('throws 400 when reply text exceeds the platform limit', async () => {
+    const post = makePost({ platform: 'X' })
+    const parent = makeComment({ postId: post.id })
+    const prisma = createMockPrisma({
+      findUniqueComment: async () => ({ ...parent, post })
+    })
+
+    await expect(
+      createReplyByCommentId({
+        request: createMockRequest({ prisma }),
+        commentId: parent.id,
+        text: 'x'.repeat(281)
+      })
+    ).rejects.toMatchObject({
+      statusCode: 400,
+      message: expect.stringMatching(/280-character limit for X/i)
+    })
+  })
+
   it('creates a PENDING comment and enqueues by commentId', async () => {
     const post = makePost()
     const parent = makeComment({ postId: post.id })

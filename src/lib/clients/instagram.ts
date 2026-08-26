@@ -1,4 +1,6 @@
-import type { StaticPlatformUser } from '../../config/staticPlatformUser.js'
+import { getStaticPlatformUser } from '../../config/staticPlatformUser.js'
+import { createPlatformHttpClient } from './http.js'
+import { INSTAGRAM_REPLY_MAX_LENGTH } from './limits.js'
 import type {
   CreateReplyResult,
   PlatformClient,
@@ -13,57 +15,50 @@ interface InstagramCreateReplyResponse {
   id?: string
 }
 
+const user = getStaticPlatformUser('instagram')
+const http = createPlatformHttpClient({
+  platform: 'Instagram',
+  baseUrl: user.apiBaseUrl
+})
+
 export async function listInstagramPosts({
-  user,
   limit = 5
 }: {
-  user: StaticPlatformUser
   limit?: number
-}): Promise<PlatformPost[]> {
-  const url = new URL(`${user.apiBaseUrl}/${user.externalAccountId}/media`)
-  url.searchParams.set('access_token', user.accessToken)
+} = {}): Promise<PlatformPost[]> {
+  const body = await http.get<InstagramMediaListResponse>(
+    `/${user.externalAccountId}/media`,
+    { query: { access_token: user.accessToken } }
+  )
 
-  const response = await fetch(url)
-  if (!response.ok) {
-    throw new Error(
-      `Instagram list posts failed: ${response.status} ${response.statusText}`
-    )
-  }
-
-  const body = (await response.json()) as InstagramMediaListResponse
   return (body.data ?? []).slice(0, limit).map((item) => ({
     externalId: item.id
   }))
 }
 
 export async function createInstagramReply({
-  user,
   externalCommentId,
   text
 }: {
-  user: StaticPlatformUser
   externalCommentId: string
   text: string
 }): Promise<CreateReplyResult> {
-  const response = await fetch(
-    `${user.apiBaseUrl}/${externalCommentId}/replies`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: text,
-        access_token: user.accessToken
-      })
-    }
-  )
-
-  if (!response.ok) {
+  if (text.length > INSTAGRAM_REPLY_MAX_LENGTH) {
     throw new Error(
-      `Instagram create reply failed: ${response.status} ${response.statusText}`
+      `Instagram reply text exceeds ${INSTAGRAM_REPLY_MAX_LENGTH} characters`
     )
   }
 
-  const body = (await response.json()) as InstagramCreateReplyResponse
+  const body = await http.post<InstagramCreateReplyResponse>(
+    `/${externalCommentId}/replies`,
+    {
+      json: {
+        message: text,
+        access_token: user.accessToken
+      }
+    }
+  )
+
   if (!body.id) {
     throw new Error('Instagram create reply failed: missing id in response')
   }
@@ -71,11 +66,8 @@ export async function createInstagramReply({
   return { externalId: body.id }
 }
 
-export function createInstagramClient(
-  user: StaticPlatformUser
-): PlatformClient {
+export function createInstagramClient(): PlatformClient {
   return {
-    createReply: ({ externalCommentId, text }) =>
-      createInstagramReply({ user, externalCommentId, text })
+    createReply: createInstagramReply
   }
 }

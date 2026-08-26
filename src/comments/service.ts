@@ -1,5 +1,6 @@
 import type { Comment, Platform } from '../generated/prisma/client.js'
 import { getStaticPlatformUser } from '../config/staticPlatformUser.js'
+import { maxReplyLengthForPlatform } from '../lib/clients/limits.js'
 import { httpError } from '../lib/httpError.js'
 import { buildPaginationResult } from '../lib/pagination.js'
 import { createQueuedResponse } from '../queue/queuedResponse.js'
@@ -74,6 +75,14 @@ export async function createReplyByCommentId({
     throw httpError(
       400,
       'Parent comment is not synced to a platform and cannot be replied to'
+    )
+  }
+
+  const maxLength = maxReplyLengthForPlatform(parent.post.platform)
+  if (text.length > maxLength) {
+    throw httpError(
+      400,
+      `Reply text exceeds the ${maxLength}-character limit for ${parent.post.platform}`
     )
   }
 

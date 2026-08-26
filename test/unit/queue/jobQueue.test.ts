@@ -4,8 +4,7 @@ const addMock = jest.fn(async () => undefined)
 const closeMock = jest.fn(async () => undefined)
 const workerOnMock = jest.fn()
 let workerProcessor:
-  | ((job: { data: { commentId: string } }) => Promise<void>)
-  | undefined
+  ((job: { data: { commentId: string } }) => Promise<void>) | undefined
 let failedHandler:
   | ((
       job:

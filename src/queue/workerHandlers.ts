@@ -19,7 +19,9 @@ export function createWorkerHandlers({
     },
 
     handleFailed(
-      job: { data: JobData; attemptsMade: number; opts: { attempts?: number } } | undefined,
+      job:
+        | { data: JobData; attemptsMade: number; opts: { attempts?: number } }
+        | undefined,
       error: Error
     ): void {
       if (!job) return

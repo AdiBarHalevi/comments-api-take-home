@@ -59,8 +59,7 @@ async function canConnect(urlString: string): Promise<boolean> {
   try {
     const url = new URL(urlString)
     const port =
-      Number(url.port) ||
-      (url.protocol.startsWith('postgres') ? 5432 : 6379)
+      Number(url.port) || (url.protocol.startsWith('postgres') ? 5432 : 6379)
     const host = url.hostname || '127.0.0.1'
 
     return await new Promise((resolveConnect) => {

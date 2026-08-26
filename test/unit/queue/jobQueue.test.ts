@@ -5,8 +5,7 @@ const closeMock = jest.fn(async () => undefined)
 const workerOnMock = jest.fn()
 let lastQueueName: string | undefined
 let workerProcessor:
-  | ((job: { data: { commentId: string } }) => Promise<void>)
-  | undefined
+  ((job: { data: { commentId: string } }) => Promise<void>) | undefined
 let failedHandler:
   | ((
       job:
@@ -47,9 +46,8 @@ jest.unstable_mockModule('bullmq', () => ({
   }
 }))
 
-const { createJobQueue, DEFAULT_QUEUE_NAME } = await import(
-  '../../../src/queue/jobQueue.js'
-)
+const { createJobQueue, DEFAULT_QUEUE_NAME } =
+  await import('../../../src/queue/jobQueue.js')
 
 describe('createJobQueue', () => {
   beforeEach(() => {

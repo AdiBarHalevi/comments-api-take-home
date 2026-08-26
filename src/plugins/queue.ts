@@ -4,13 +4,15 @@ import {
   markOutboundReplyFailed,
   syncOutboundReply
 } from '../comments/syncOutboundReply.js'
-import { createJobQueue } from '../queue/jobQueue.js'
+import { createJobQueue, DEFAULT_QUEUE_NAME } from '../queue/jobQueue.js'
 import type { EnqueueJob } from '../queue/types.js'
 
 export default fp(
   async (fastify) => {
     const jobQueue = createJobQueue({
       connection: fastify.redis,
+      // Explicit stable name — restarted processes resume the same Redis queue.
+      queueName: DEFAULT_QUEUE_NAME,
       processJob: (commentId) =>
         syncOutboundReply({
           prisma: fastify.prisma,

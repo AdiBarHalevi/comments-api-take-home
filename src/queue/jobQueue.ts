@@ -1,7 +1,9 @@
-import { randomUUID } from 'node:crypto'
 import { Queue, Worker } from 'bullmq'
 import type { EnqueueJob, JobData } from './types.js'
 import { createWorkerHandlers } from './workerHandlers.js'
+
+/** Stable name so a restarted process resumes jobs left in Redis. */
+export const DEFAULT_QUEUE_NAME = 'create-reply'
 
 const ENQUEUE_ATTEMPTS = 3
 const ENQUEUE_RETRY_DELAY_MS = 100
@@ -26,14 +28,15 @@ export type JobQueue = {
  * Durable BullMQ wrapper. Jobs store only `{ commentId }`; `processJob` /
  * `onJobFailed` are wired once at construction and reload work from the DB.
  *
- * Queue names are isolated per instance so parallel Jest apps do not cross-talk.
+ * Default queue name is stable across process restarts. Pass `queueName` only
+ * when isolating parallel consumers that share Redis (e.g. unit tests).
  */
 export function createJobQueue({
   connection,
   processJob,
   onJobFailed,
   onWorkerError,
-  queueName = `jobs-${randomUUID()}`
+  queueName = DEFAULT_QUEUE_NAME
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- ioredis client from @fastify/redis
   connection: any

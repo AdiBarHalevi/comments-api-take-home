@@ -3,8 +3,10 @@ import { jest } from '@jest/globals'
 const addMock = jest.fn(async () => undefined)
 const closeMock = jest.fn(async () => undefined)
 const workerOnMock = jest.fn()
+let lastQueueName: string | undefined
 let workerProcessor:
-  ((job: { data: { commentId: string } }) => Promise<void>) | undefined
+  | ((job: { data: { commentId: string } }) => Promise<void>)
+  | undefined
 let failedHandler:
   | ((
       job:
@@ -20,14 +22,18 @@ let failedHandler:
 
 jest.unstable_mockModule('bullmq', () => ({
   Queue: class {
+    constructor(name: string) {
+      lastQueueName = name
+    }
     add = addMock
     close = closeMock
   },
   Worker: class {
     constructor(
-      _name: string,
+      name: string,
       processor: (job: { data: { commentId: string } }) => Promise<void>
     ) {
+      lastQueueName = name
       workerProcessor = processor
     }
     on(event: string, handler: (...args: never[]) => void) {
@@ -41,15 +47,29 @@ jest.unstable_mockModule('bullmq', () => ({
   }
 }))
 
-const { createJobQueue } = await import('../../../src/queue/jobQueue.js')
+const { createJobQueue, DEFAULT_QUEUE_NAME } = await import(
+  '../../../src/queue/jobQueue.js'
+)
 
 describe('createJobQueue', () => {
   beforeEach(() => {
     addMock.mockClear()
     closeMock.mockClear()
     workerOnMock.mockClear()
+    lastQueueName = undefined
     workerProcessor = undefined
     failedHandler = undefined
+  })
+
+  it('defaults to a stable queue name for restart durability', () => {
+    createJobQueue({
+      connection: {},
+      processJob: async () => undefined,
+      onJobFailed: async () => undefined
+    })
+
+    expect(lastQueueName).toBe(DEFAULT_QUEUE_NAME)
+    expect(DEFAULT_QUEUE_NAME).toBe('create-reply')
   })
 
   it('enqueues a durable payload with only commentId', async () => {

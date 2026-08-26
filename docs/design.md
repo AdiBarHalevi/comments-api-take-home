@@ -181,6 +181,8 @@ Seed uses separate platform helpers (`listInstagramPosts` / `listXPosts`) to boo
 - Job payload is durable: only `{ commentId }` (BullMQ `jobId` = that id). The worker
   reloads the `PENDING` comment from Postgres and calls the platform client — no
   in-process closures, so a restarted API process can still finish the job.
+- Queue name is stable (`create-reply`) so the restarted process listens on the same
+  Redis queue (not a per-process UUID).
 - Retries: exponential backoff, capped attempts.
 - Mockoon latency / error responses exercise this path locally.
 

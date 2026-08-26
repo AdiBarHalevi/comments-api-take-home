@@ -6,7 +6,6 @@ export type PostFixture = {
   id?: string
   platform: Platform
   externalId: string
-  isActive?: boolean
   createdAt?: Date
 }
 
@@ -39,7 +38,6 @@ export function makePost(overrides: Partial<Post> & Pick<Post, 'platform' | 'ext
     createdAt: overrides.createdAt ?? now,
     updatedAt: overrides.updatedAt ?? now,
     externalId: overrides.externalId,
-    platform: overrides.platform,
-    isActive: overrides.isActive ?? true
+    platform: overrides.platform
   }
 }

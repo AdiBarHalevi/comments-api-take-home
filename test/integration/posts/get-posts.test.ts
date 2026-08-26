@@ -32,14 +32,12 @@ describe('GET /posts', () => {
   async function createPost(data: {
     platform: 'INSTAGRAM' | 'X'
     externalId: string
-    isActive?: boolean
   }) {
     const post = await prisma.post.create({
       data: {
         id: randomUUID(),
         platform: data.platform,
-        externalId: data.externalId,
-        isActive: data.isActive ?? true
+        externalId: data.externalId
       }
     })
     createdPostIds.push(post.id)
@@ -50,8 +48,7 @@ describe('GET /posts', () => {
     it('includes a created post in the list', async () => {
       const post = await createPost({
         platform: 'INSTAGRAM',
-        externalId: `ig-${randomUUID()}`,
-        isActive: true
+        externalId: `ig-${randomUUID()}`
       })
 
       const res = await app.inject({ method: 'GET', url: '/posts?limit=100' })
@@ -63,8 +60,7 @@ describe('GET /posts', () => {
           expect.objectContaining({
             id: post.id,
             platform: 'INSTAGRAM',
-            externalId: post.externalId,
-            isActive: true
+            externalId: post.externalId
           })
         ])
       )

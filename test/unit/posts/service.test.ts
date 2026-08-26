@@ -38,8 +38,7 @@ describe('listPosts', () => {
         makePost({
           id: '22222222-2222-2222-2222-222222222222',
           platform: 'X',
-          externalId: 'x-1',
-          isActive: false
+          externalId: 'x-1'
         })
       ]
     })
@@ -54,14 +53,12 @@ describe('listPosts', () => {
         {
           id: '11111111-1111-1111-1111-111111111111',
           platform: 'INSTAGRAM',
-          externalId: 'ig-1',
-          isActive: true
+          externalId: 'ig-1'
         },
         {
           id: '22222222-2222-2222-2222-222222222222',
           platform: 'X',
-          externalId: 'x-1',
-          isActive: false
+          externalId: 'x-1'
         }
       ],
       pagination: { nextOffset: null }

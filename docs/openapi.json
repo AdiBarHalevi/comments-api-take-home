@@ -30,9 +30,7 @@
     "/posts": {
       "get": {
         "operationId": "getPosts",
-        "tags": [
-          "Posts"
-        ],
+        "tags": ["Posts"],
         "summary": "Get posts",
         "description": "Returns local post mappings (`platform` + `externalId`) seeded from connected\nplatform accounts. Use `id` when calling `getCommentsByPostId`.\n",
         "parameters": [
@@ -62,9 +60,7 @@
     "/posts/{postId}/comments": {
       "get": {
         "operationId": "getCommentsByPostId",
-        "tags": [
-          "Comments"
-        ],
+        "tags": ["Comments"],
         "summary": "Get comments by post id",
         "description": "Returns local top-level comments for the post. Use `id` (not `externalId`)\nwhen calling reply endpoints.\n",
         "parameters": [
@@ -94,9 +90,7 @@
     "/comments/{commentId}/replies": {
       "post": {
         "operationId": "createReplyByCommentId",
-        "tags": [
-          "Comments"
-        ],
+        "tags": ["Comments"],
         "summary": "Reply to a comment",
         "description": "Creates an outbound reply asynchronously. The handler returns immediately with\na `PENDING` acknowledgment; a background worker posts to the platform.\nDelivery status is tracked internally on the comment row (`PENDING` → `SYNCED` /\n`FAILED`). A client-facing poll or webhook is out of scope for this take-home.\n",
         "parameters": [
@@ -145,20 +139,13 @@
       },
       "SortBy": {
         "type": "string",
-        "enum": [
-          "createdAt",
-          "id",
-          "platform"
-        ],
+        "enum": ["createdAt", "id", "platform"],
         "default": "createdAt",
         "description": "Field to sort posts by"
       },
       "SortOrder": {
         "type": "string",
-        "enum": [
-          "asc",
-          "desc"
-        ],
+        "enum": ["asc", "desc"],
         "default": "asc",
         "description": "Sort direction"
       },
@@ -200,19 +187,12 @@
       },
       "Platform": {
         "type": "string",
-        "enum": [
-          "INSTAGRAM",
-          "X"
-        ],
+        "enum": ["INSTAGRAM", "X"],
         "description": "Social platform the post was published on"
       },
       "Post": {
         "type": "object",
-        "required": [
-          "id",
-          "platform",
-          "externalId"
-        ],
+        "required": ["id", "platform", "externalId"],
         "properties": {
           "id": {
             "$ref": "#/components/schemas/Uuid",
@@ -229,10 +209,7 @@
       },
       "PaginatedPostsResponse": {
         "type": "object",
-        "required": [
-          "data",
-          "pagination"
-        ],
+        "required": ["data", "pagination"],
         "properties": {
           "data": {
             "type": "array",
@@ -246,25 +223,15 @@
         }
       },
       "NullableString": {
-        "type": [
-          "string",
-          "null"
-        ]
+        "type": ["string", "null"]
       },
       "NullableUuid": {
-        "type": [
-          "string",
-          "null"
-        ],
+        "type": ["string", "null"],
         "format": "uuid"
       },
       "CommentStatus": {
         "type": "string",
-        "enum": [
-          "PENDING",
-          "SYNCED",
-          "FAILED"
-        ],
+        "enum": ["PENDING", "SYNCED", "FAILED"],
         "description": "Present only on outbound replies created by this API. `null` for\nplatform/seeded comments.\n"
       },
       "NullableCommentStatus": {
@@ -280,9 +247,7 @@
       },
       "Comment": {
         "type": "object",
-        "required": [
-          "id"
-        ],
+        "required": ["id"],
         "properties": {
           "id": {
             "$ref": "#/components/schemas/CommentId"
@@ -318,10 +283,7 @@
         }
       },
       "NullableOffset": {
-        "type": [
-          "integer",
-          "null"
-        ],
+        "type": ["integer", "null"],
         "minimum": 0,
         "description": "Pass as `offset` on the next request; null when no next page"
       },
@@ -335,10 +297,7 @@
       },
       "PaginatedCommentsResponse": {
         "type": "object",
-        "required": [
-          "data",
-          "pagination"
-        ],
+        "required": ["data", "pagination"],
         "properties": {
           "data": {
             "type": "array",
@@ -372,9 +331,7 @@
       },
       "CreateReplyByCommentIdRequest": {
         "type": "object",
-        "required": [
-          "text"
-        ],
+        "required": ["text"],
         "properties": {
           "text": {
             "$ref": "#/components/schemas/CommentText"
@@ -388,12 +345,7 @@
       "CreateReplyByCommentIdResponse": {
         "description": "Subset returned immediately after accepting a reply request",
         "type": "object",
-        "required": [
-          "id",
-          "status",
-          "text",
-          "parentId"
-        ],
+        "required": ["id", "status", "text", "parentId"],
         "properties": {
           "id": {
             "$ref": "#/components/schemas/CommentId"

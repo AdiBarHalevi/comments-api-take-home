@@ -183,11 +183,13 @@ describe('createReplyByCommentId', () => {
       }
     })
 
-    ;(prisma.comment as { updateMany: (args: unknown) => Promise<unknown> }).updateMany =
-      async (args) => {
-        updated = args
-        return { count: 1 }
-      }
+    // markOutboundReplyFailed uses updateMany — extend mock
+    ;(
+      prisma.comment as { updateMany: (args: unknown) => Promise<unknown> }
+    ).updateMany = async (args) => {
+      updated = args
+      return { count: 1 }
+    }
 
     await expect(
       createReplyByCommentId({

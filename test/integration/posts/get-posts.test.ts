@@ -84,9 +84,7 @@ describe('GET /posts', () => {
 
       expect(res.statusCode).toBe(200)
       const body = JSON.parse(res.payload)
-      const ours = body.data.filter((p: { id: string }) =>
-        ids.includes(p.id)
-      )
+      const ours = body.data.filter((p: { id: string }) => ids.includes(p.id))
       expect(ours.map((p: { id: string }) => p.id)).toEqual(ids)
     })
 

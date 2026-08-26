@@ -12,6 +12,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "DOTENV_CONFIG_PATH=.env.test NODE_OPTIONS=--experimental-vm-modules jest --setupFiles=dotenv/config --testPathPatterns=test/unit",
     "test:integration": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand --setupFiles=./test/setupIntegration.ts --testPathPatterns=test/integration --testPathPatterns=test/routes",

@@ -29,21 +29,6 @@ export function createCommentsHandlers() {
       })
     },
 
-    async getCommentById(
-      request: AppRequest<{
-        Params: { commentId: string }
-      }>
-    ) {
-      const comment = await request.server.prisma.comment.findUnique({
-        where: { id: request.params.commentId }
-      })
-      if (!comment) {
-        throw httpError(404, 'Comment not found')
-      }
-
-      return commentsService.getCommentById({ comment })
-    },
-
     async createReplyByCommentId(
       request: AppRequest<{
         Params: { commentId: string }

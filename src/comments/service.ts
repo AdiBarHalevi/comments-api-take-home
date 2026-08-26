@@ -63,14 +63,6 @@ export async function listCommentsByPostId({
   }
 }
 
-export function getCommentById({
-  comment
-}: {
-  comment: Comment
-}): CommentResponse {
-  return toCommentResponse(comment)
-}
-
 export async function createReplyByCommentId({
   request,
   parent,
@@ -125,7 +117,6 @@ export async function createReplyByCommentId({
 
 export const commentsService = {
   listCommentsByPostId,
-  getCommentById,
   createReplyByCommentId
 }
 

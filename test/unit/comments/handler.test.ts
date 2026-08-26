@@ -53,30 +53,6 @@ describe('createCommentsHandlers', () => {
     expect(result.pagination.nextOffset).toBeNull()
   })
 
-  it('getCommentById throws 404 when the comment does not exist', async () => {
-    const request = createMockRequest({
-      prisma: createMockPrisma({ findUniqueComment: async () => null }),
-      params: { commentId: '22222222-2222-2222-2222-222222222222' }
-    })
-
-    await expect(handlers.getCommentById(request)).rejects.toMatchObject({
-      message: 'Comment not found',
-      statusCode: 404
-    })
-  })
-
-  it('getCommentById delegates to the service after validating the comment', async () => {
-    const comment = makeComment({ status: 'PENDING', externalId: null })
-    const request = createMockRequest({
-      prisma: createMockPrisma({ findUniqueComment: async () => comment }),
-      params: { commentId: comment.id }
-    })
-
-    const result = await handlers.getCommentById(request)
-
-    expect(result).toMatchObject({ id: comment.id, status: 'PENDING' })
-  })
-
   it('createReplyByCommentId throws 404 when the parent does not exist', async () => {
     const request = createMockRequest({
       prisma: createMockPrisma({ findUniqueComment: async () => null }),

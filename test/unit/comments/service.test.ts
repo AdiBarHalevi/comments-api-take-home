@@ -1,6 +1,5 @@
 import {
   createReplyByCommentId,
-  getCommentById,
   listCommentsByPostId
 } from '../../../src/comments/service.js'
 import {
@@ -66,22 +65,6 @@ describe('listCommentsByPostId', () => {
       lastError: null
     })
     expect(result.pagination).toEqual({ nextOffset: 2 })
-  })
-})
-
-describe('getCommentById', () => {
-  it('maps a comment to the response shape', () => {
-    const comment = makeComment({ status: 'PENDING', externalId: null })
-
-    expect(getCommentById({ comment })).toEqual({
-      id: comment.id,
-      externalId: null,
-      text: comment.text,
-      parentId: null,
-      authorUsername: 'fan_account',
-      status: 'PENDING',
-      lastError: null
-    })
   })
 })
 

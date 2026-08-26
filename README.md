@@ -6,7 +6,7 @@ See [docs/assignment.md](docs/assignment.md) for the brief and [docs/design.md](
 
 ## Prerequisites
 
-- Node.js 20+
+- Node.js 22 (see `.nvmrc`)
 - Docker (dev Postgres/Redis/mocks; integration tests use Testcontainers)
 
 ## Setup

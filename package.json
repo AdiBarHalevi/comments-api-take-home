@@ -31,8 +31,11 @@
     "db:studio": "prisma studio"
   },
   "keywords": [],
-  "author": "",
+  "author": "Adi Bar-Halevi",
   "license": "ISC",
+  "engines": {
+    "node": "22"
+  },
   "dependencies": {
     "@fastify/autoload": "^6.0.0",
     "@fastify/redis": "^9.0.0",

@@ -1,24 +1,49 @@
-# Getting Started with [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
+# Comments API (take-home)
 
-This project was bootstrapped with Fastify-CLI.
+Platform-agnostic REST API for listing comments on published social posts and creating async replies to Instagram / X.
 
-## Available Scripts
+See [docs/assignment.md](docs/assignment.md) for the brief and [docs/design.md](docs/design.md) for schema, assumptions, and design decisions. The OpenAPI contract is [docs/openapi.json](docs/openapi.json).
 
-In the project directory, you can run:
+## Prerequisites
 
-### `npm run dev`
+- Node.js 20+
+- Docker (Postgres, Redis, Instagram/X mocks)
 
-To start the app in dev mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Setup
 
-### `npm start`
+```bash
+cp .env.example .env
+npm install
+npm run bootstrap   # docker up + prisma generate + migrate
+npm run db:seed     # map ~10 mock posts and sample comments
+npm run dev         # API at http://127.0.0.1:3000
+```
 
-For production mode
+Swagger UI: [http://127.0.0.1:3000/documentation](http://127.0.0.1:3000/documentation)
 
-### `npm run test`
+## API
 
-Run the test cases.
+| Method | Path | Notes |
+| --- | --- | --- |
+| `GET` | `/posts` | Local post mappings (`platform` + `externalId`) |
+| `GET` | `/posts/{postId}/comments` | Local top-level comments for a post |
+| `POST` | `/comments/{commentId}/replies` | `202` — queues outbound reply; worker syncs to the platform |
 
-## Learn More
+Replies are fire-and-forget for this take-home. Delivery status (`PENDING` → `SYNCED` / `FAILED`) is stored on the comment row for the BullMQ worker; there is no client poll endpoint.
 
-To learn Fastify, check out the [Fastify documentation](https://fastify.dev/docs/latest/).
+## Scripts
+
+| Script | Purpose |
+| --- | --- |
+| `npm run bootstrap` | Start Docker deps, generate Prisma client, deploy migrations |
+| `npm run db:seed` | Seed posts from mocks + sample comments |
+| `npm run db:studio` | Prisma Studio |
+| `npm run dev` | Watch-compile + Fastify with reload |
+| `npm start` | Production build + start |
+| `npm test` | Unit + integration (starts test Postgres + Redis) |
+| `npm run test:unit` | Unit tests only |
+| `npm run lint` / `npm run format` | ESLint / Prettier |
+
+## Stack
+
+Fastify, Prisma (Postgres), BullMQ (Redis), OpenAPI-driven routes, Dockerized Instagram/X mocks.

@@ -7,7 +7,7 @@ See [docs/assignment.md](docs/assignment.md) for the brief and [docs/design.md](
 ## Prerequisites
 
 - Node.js 20+
-- Docker (Postgres, Redis, Instagram/X mocks)
+- Docker (dev Postgres/Redis/mocks; integration tests use Testcontainers)
 
 ## Setup
 
@@ -40,8 +40,9 @@ Replies are fire-and-forget for this take-home. Delivery status (`PENDING` → `
 | `npm run db:studio` | Prisma Studio |
 | `npm run dev` | Watch-compile + Fastify with reload |
 | `npm start` | Production build + start |
-| `npm test` | Unit + integration (starts test Postgres + Redis) |
-| `npm run test:unit` | Unit tests only |
+| `npm test` | Unit tests, then integration (Testcontainers) |
+| `npm run test:unit` | Unit tests only (no Docker) |
+| `npm run test:integration` | Integration tests via Testcontainers |
 | `npm run lint` / `npm run format` | ESLint / Prettier |
 
 ## Stack

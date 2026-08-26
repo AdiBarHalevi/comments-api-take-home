@@ -4,19 +4,14 @@ import swaggerUi from '@fastify/swagger-ui'
 import fp from 'fastify-plugin'
 
 const DOCS_ROUTE_PREFIX = '/openapi'
-
-function resolveOpenApiSpecPath(): string {
-  return join(process.cwd(), 'docs', 'openapi.yaml')
-}
+const OPENAPI_SPEC_PATH = join(process.cwd(), 'docs', 'openapi.json')
 
 export default fp(async (fastify) => {
-  const openApiDir = join(process.cwd(), 'docs')
-
   await fastify.register(swagger, {
     mode: 'static',
     specification: {
-      path: resolveOpenApiSpecPath(),
-      baseDir: openApiDir
+      path: OPENAPI_SPEC_PATH,
+      baseDir: join(process.cwd(), 'docs')
     }
   })
 

@@ -1,4 +1,4 @@
-import { env } from './env'
+import { env } from './env.js'
 
 /**
  * Take-home assumption: all platform API calls act as one static brand account.

@@ -2,6 +2,7 @@
   "name": "comments-api-take-home",
   "version": "1.0.0",
   "description": "This project was bootstrapped with Fastify-CLI.",
+  "type": "module",
   "main": "app.ts",
   "directories": {
     "test": "test"
@@ -11,12 +12,12 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "npm run build:ts && tsc -p test/tsconfig.json && c8 node --test -r ts-node/register \"test/**/*.ts\"",
-    "start": "npm run build:ts && fastify start -l info dist/app.js",
+    "test": "npm run build:ts && tsc -p test/tsconfig.json && c8 node --test --loader ts-node/esm \"test/**/*.ts\"",
+    "start": "npm run build:ts && fastify start -l info -o dist/app.js",
     "build:ts": "npm run db:generate && tsc",
     "watch:ts": "tsc -w",
     "dev": "tsc && npm-run-all --parallel watch:ts dev:start",
-    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js",
+    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P -o dist/app.js",
     "mocks": "docker compose up mock-instagram mock-x",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
@@ -24,6 +25,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:migrate:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
     "db:studio": "prisma studio"
   },
   "keywords": [],
@@ -39,6 +41,7 @@
     "dotenv": "^17.4.2",
     "fastify": "^5.0.0",
     "fastify-cli": "^8.0.0",
+    "fastify-openapi-glue": "^4.11.4",
     "fastify-plugin": "^5.0.0",
     "pg": "^8.23.0",
     "zod": "^4.4.3"
@@ -55,6 +58,7 @@
     "prettier": "^3.9.6",
     "prisma": "^7.10.0",
     "ts-node": "^10.4.0",
+    "tsx": "^4.23.12",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.68.0"
   }

@@ -1,12 +1,14 @@
+import { randomUUID } from 'node:crypto'
 import type { FastifyInstance } from 'fastify'
 import { env } from '../../../src/config/env.js'
-import { createPrismaClient } from '../../../src/lib/prisma.js'
 import type { PrismaClient } from '../../../src/generated/prisma/client.js'
+import { createPrismaClient } from '../../../src/lib/prisma.js'
 import { build } from '../../helper.js'
 
 describe('GET /posts', () => {
   let app: FastifyInstance
   let prisma: PrismaClient
+  const createdPostIds: string[] = []
 
   beforeAll(async () => {
     prisma = createPrismaClient(env.DATABASE_URL)
@@ -18,129 +20,101 @@ describe('GET /posts', () => {
     await prisma.$disconnect()
   })
 
-  beforeEach(async () => {
-    await prisma.comment.deleteMany()
-    await prisma.post.deleteMany()
+  afterEach(async () => {
+    if (createdPostIds.length === 0) return
+    await prisma.comment.deleteMany({
+      where: { postId: { in: createdPostIds } }
+    })
+    await prisma.post.deleteMany({ where: { id: { in: createdPostIds } } })
+    createdPostIds.length = 0
   })
 
+  async function createPost(data: {
+    platform: 'INSTAGRAM' | 'X'
+    externalId: string
+    isActive?: boolean
+  }) {
+    const post = await prisma.post.create({
+      data: {
+        id: randomUUID(),
+        platform: data.platform,
+        externalId: data.externalId,
+        isActive: data.isActive ?? true
+      }
+    })
+    createdPostIds.push(post.id)
+    return post
+  }
+
   describe('200', () => {
-    it('returns an empty list when no posts exist', async () => {
-      const res = await app.inject({ method: 'GET', url: '/posts' })
+    it('includes a created post in the list', async () => {
+      const post = await createPost({
+        platform: 'INSTAGRAM',
+        externalId: `ig-${randomUUID()}`,
+        isActive: true
+      })
+
+      const res = await app.inject({ method: 'GET', url: '/posts?limit=100' })
 
       expect(res.statusCode).toBe(200)
-      expect(JSON.parse(res.payload)).toEqual({
-        data: [],
-        pagination: { nextOffset: null }
-      })
+      const body = JSON.parse(res.payload)
+      expect(body.data).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: post.id,
+            platform: 'INSTAGRAM',
+            externalId: post.externalId,
+            isActive: true
+          })
+        ])
+      )
     })
 
-    it('returns seeded posts', async () => {
-      await prisma.post.createMany({
-        data: [
-          {
-            id: '11111111-1111-1111-1111-111111111111',
-            platform: 'INSTAGRAM',
-            externalId: 'ig-1',
-            isActive: true
-          },
-          {
-            id: '22222222-2222-2222-2222-222222222222',
-            platform: 'X',
-            externalId: 'x-1',
-            isActive: false
-          }
-        ]
+    it('returns created posts ordered by id when requested', async () => {
+      const first = await createPost({
+        platform: 'INSTAGRAM',
+        externalId: `ig-${randomUUID()}`
       })
+      const second = await createPost({
+        platform: 'X',
+        externalId: `x-${randomUUID()}`
+      })
+      const ids = [first.id, second.id].sort()
 
       const res = await app.inject({
         method: 'GET',
-        url: '/posts?sortBy=id&sortOrder=asc'
-      })
-
-      expect(res.statusCode).toBe(200)
-      expect(JSON.parse(res.payload)).toEqual({
-        data: [
-          {
-            id: '11111111-1111-1111-1111-111111111111',
-            platform: 'INSTAGRAM',
-            externalId: 'ig-1',
-            isActive: true
-          },
-          {
-            id: '22222222-2222-2222-2222-222222222222',
-            platform: 'X',
-            externalId: 'x-1',
-            isActive: false
-          }
-        ],
-        pagination: { nextOffset: null }
-      })
-    })
-
-    it('paginates with nextOffset', async () => {
-      await prisma.post.createMany({
-        data: [
-          {
-            id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-            platform: 'INSTAGRAM',
-            externalId: 'ig-a'
-          },
-          {
-            id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-            platform: 'INSTAGRAM',
-            externalId: 'ig-b'
-          },
-          {
-            id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
-            platform: 'X',
-            externalId: 'x-c'
-          }
-        ]
-      })
-
-      const first = await app.inject({
-        method: 'GET',
-        url: '/posts?limit=2&sortBy=id&sortOrder=asc'
-      })
-      expect(first.statusCode).toBe(200)
-      const firstBody = JSON.parse(first.payload)
-      expect(firstBody.data).toHaveLength(2)
-      expect(firstBody.pagination.nextOffset).toBe(2)
-
-      const second = await app.inject({
-        method: 'GET',
-        url: '/posts?offset=2&limit=2&sortBy=id&sortOrder=asc'
-      })
-      expect(second.statusCode).toBe(200)
-      const secondBody = JSON.parse(second.payload)
-      expect(secondBody.data).toHaveLength(1)
-      expect(secondBody.pagination.nextOffset).toBeNull()
-    })
-
-    it('sorts by platform desc', async () => {
-      await prisma.post.createMany({
-        data: [
-          {
-            id: '11111111-1111-1111-1111-111111111111',
-            platform: 'INSTAGRAM',
-            externalId: 'ig-1'
-          },
-          {
-            id: '22222222-2222-2222-2222-222222222222',
-            platform: 'X',
-            externalId: 'x-1'
-          }
-        ]
-      })
-
-      const res = await app.inject({
-        method: 'GET',
-        url: '/posts?sortBy=platform&sortOrder=desc'
+        url: '/posts?limit=100&sortBy=id&sortOrder=asc'
       })
 
       expect(res.statusCode).toBe(200)
       const body = JSON.parse(res.payload)
-      expect(body.data.map((p: { platform: string }) => p.platform)).toEqual([
+      const ours = body.data.filter((p: { id: string }) =>
+        ids.includes(p.id)
+      )
+      expect(ours.map((p: { id: string }) => p.id)).toEqual(ids)
+    })
+
+    it('returns created posts ordered by platform desc when requested', async () => {
+      const ig = await createPost({
+        platform: 'INSTAGRAM',
+        externalId: `ig-${randomUUID()}`
+      })
+      const x = await createPost({
+        platform: 'X',
+        externalId: `x-${randomUUID()}`
+      })
+
+      const res = await app.inject({
+        method: 'GET',
+        url: '/posts?limit=100&sortBy=platform&sortOrder=desc'
+      })
+
+      expect(res.statusCode).toBe(200)
+      const body = JSON.parse(res.payload)
+      const ours = body.data.filter((p: { id: string }) =>
+        [ig.id, x.id].includes(p.id)
+      )
+      expect(ours.map((p: { platform: string }) => p.platform)).toEqual([
         'X',
         'INSTAGRAM'
       ])

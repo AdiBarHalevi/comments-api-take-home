@@ -3,11 +3,7 @@ import { env } from '../config/env.js'
 import { createPrismaClient } from '../lib/prisma.js'
 import type { PrismaClient } from '../generated/prisma/client.js'
 
-export interface PrismaPluginOptions {
-  // Reserved for test overrides (e.g. inject a mock client).
-}
-
-export default fp<PrismaPluginOptions>(
+export default fp(
   async (fastify) => {
     const prisma = createPrismaClient(env.DATABASE_URL)
 

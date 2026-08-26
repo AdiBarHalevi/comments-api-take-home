@@ -28,5 +28,5 @@ function loadEnv(): Env {
   return parsed.data
 }
 
-/** Validated env — fails fast at import if `.env` is missing/invalid. */
+/** Validated env — fails fast at import if env is missing/invalid. */
 export const env = loadEnv()

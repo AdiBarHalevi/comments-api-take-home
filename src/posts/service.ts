@@ -26,6 +26,11 @@ export async function listPosts(
   }
 }
 
+/** Object form so tests can `jest.spyOn(postsService, 'listPosts')`. */
+export const postsService = {
+  listPosts
+}
+
 function buildPostOrderBy(
   sortBy: NonNullable<ListPostsRequest['sortBy']>,
   sortOrder: NonNullable<ListPostsRequest['sortOrder']>

@@ -76,13 +76,13 @@ model Comment {
 
 ## How posts get into the DB
 
-A **bootstrap CLI command** (e.g. `npm run bootstrap`) lists posts from the platform mocks and inserts **~10** into the local DB as mappings only (`platform` + `externalId`, plus our `id`).
+A **bootstrap CLI command** (e.g. `npm run bootstrap` / `npm run db:seed`) lists posts from the platform mocks and inserts **~10** into the local DB as mappings only (`platform` + `externalId`, plus our `id`).
 
 - Instagram: `GET /{user_id}/media` (static account from env)
 - X: `GET /2/users/{id}/tweets` (static account from env)
 - Mix across both platforms (e.g. ~5 each).
-- Post references only — no comment tree download.
-- Safe to re-run (upsert on `(platform, externalId)` or clear-and-reseed — TBD).
+- Seed also inserts **5 sample top-level comments** per post (synthetic local rows for dev convenience). This is separate from runtime materialization on list GET.
+- Safe to re-run (upsert on `(platform, externalId)` / `(postId, externalId)`).
 
 Comments are fetched from the platform on list GETs, **materialized locally**, then returned with our ids (see Read APIs).
 

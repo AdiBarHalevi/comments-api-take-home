@@ -8,46 +8,55 @@ import { build } from '../../helper.js'
 
 const originalFetch = globalThis.fetch
 
-type CommentPollBody = {
-  id: string
-  status: 'PENDING' | 'SYNCED' | 'FAILED' | null
-  externalId: string | null
-  text: string | null
-  parentId: string | null
-  lastError: string | null
-}
+type CommentStatus = 'PENDING' | 'SYNCED' | 'FAILED'
 
 async function waitForCommentStatus({
-  app,
+  prisma,
   commentId,
   statuses,
   timeoutMs = 8_000
 }: {
-  app: FastifyInstance
+  prisma: PrismaClient
   commentId: string
-  statuses: Array<'PENDING' | 'SYNCED' | 'FAILED'>
+  statuses: CommentStatus[]
   timeoutMs?: number
-}): Promise<CommentPollBody & { status: 'PENDING' | 'SYNCED' | 'FAILED' }> {
+}) {
   const deadline = Date.now() + timeoutMs
-  let lastBody: CommentPollBody | undefined
+  let last:
+    | {
+        id: string
+        status: CommentStatus | null
+        externalId: string | null
+        text: string | null
+        parentId: string | null
+        lastError: string | null
+      }
+    | undefined
 
   while (Date.now() < deadline) {
-    const res = await app.inject({
-      method: 'GET',
-      url: `/comments/${commentId}`
-    })
-    expect(res.statusCode).toBe(200)
-    lastBody = JSON.parse(res.payload) as CommentPollBody
-    if (lastBody.status && statuses.includes(lastBody.status)) {
-      return lastBody as CommentPollBody & {
-        status: 'PENDING' | 'SYNCED' | 'FAILED'
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      select: {
+        id: true,
+        status: true,
+        externalId: true,
+        text: true,
+        parentId: true,
+        lastError: true
       }
+    })
+    if (!comment) {
+      throw new Error(`Comment ${commentId} not found`)
+    }
+    last = comment
+    if (comment.status && statuses.includes(comment.status)) {
+      return comment as typeof comment & { status: CommentStatus }
     }
     await new Promise((resolve) => setTimeout(resolve, 50))
   }
 
   throw new Error(
-    `Timed out waiting for status in [${statuses.join(', ')}]; last=${JSON.stringify(lastBody)}`
+    `Timed out waiting for status in [${statuses.join(', ')}]; last=${JSON.stringify(last)}`
   )
 }
 
@@ -148,7 +157,7 @@ describe('POST /comments/:commentId/replies', () => {
       })
 
       const synced = await waitForCommentStatus({
-        app,
+        prisma,
         commentId: body.id,
         statuses: ['SYNCED']
       })
@@ -185,7 +194,7 @@ describe('POST /comments/:commentId/replies', () => {
       const { id } = JSON.parse(res.payload) as { id: string }
 
       const synced = await waitForCommentStatus({
-        app,
+        prisma,
         commentId: id,
         statuses: ['SYNCED']
       })

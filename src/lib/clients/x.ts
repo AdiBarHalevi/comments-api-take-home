@@ -1,5 +1,9 @@
 import type { StaticPlatformUser } from '../../config/staticPlatformUser.js'
-import type { CreateReplyResult, PlatformClient, PlatformPost } from './types.js'
+import type {
+  CreateReplyResult,
+  PlatformClient,
+  PlatformPost
+} from './types.js'
 
 interface XTweetsListResponse {
   data?: Array<{ id: string }>
@@ -26,7 +30,9 @@ export async function listXPosts({
     }
   })
   if (!response.ok) {
-    throw new Error(`X list posts failed: ${response.status} ${response.statusText}`)
+    throw new Error(
+      `X list posts failed: ${response.status} ${response.statusText}`
+    )
   }
 
   const body = (await response.json()) as XTweetsListResponse

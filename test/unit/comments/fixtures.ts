@@ -1,18 +1,23 @@
 import type { FastifyInstance } from 'fastify'
-import type { Comment, Post, PrismaClient } from '../../../src/generated/prisma/client.js'
+import type {
+  Comment,
+  Post,
+  PrismaClient
+} from '../../../src/generated/prisma/client.js'
 import type { EnqueueJob } from '../../../src/queue/types.js'
 import type { AppRequest } from '../../../src/types/request.js'
 
-export function createMockPrisma(overrides: {
-  findUniquePost?: (args: unknown) => Promise<Post | null>
-  findUniqueComment?: (args: unknown) => Promise<
-    | (Comment & { post?: Post })
-    | null
-  >
-  findManyComments?: (args: unknown) => Promise<Comment[]>
-  createComment?: (args: unknown) => Promise<Comment>
-  updateComment?: (args: unknown) => Promise<Comment>
-} = {}): PrismaClient {
+export function createMockPrisma(
+  overrides: {
+    findUniquePost?: (args: unknown) => Promise<Post | null>
+    findUniqueComment?: (
+      args: unknown
+    ) => Promise<(Comment & { post?: Post }) | null>
+    findManyComments?: (args: unknown) => Promise<Comment[]>
+    createComment?: (args: unknown) => Promise<Comment>
+    updateComment?: (args: unknown) => Promise<Comment>
+  } = {}
+): PrismaClient {
   return {
     post: {
       findUnique: overrides.findUniquePost ?? (async () => null)

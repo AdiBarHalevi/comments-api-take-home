@@ -4,9 +4,7 @@ import type { ListPostsRequest } from './types.js'
 
 export function createPostsHandlers() {
   return {
-    async getPosts(
-      request: AppRequest<{ Querystring: ListPostsRequest }>
-    ) {
+    async getPosts(request: AppRequest<{ Querystring: ListPostsRequest }>) {
       return postsService.listPosts({
         request,
         query: request.query

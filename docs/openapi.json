@@ -18,6 +18,10 @@
   "security": [],
   "tags": [
     {
+      "name": "Health",
+      "description": "Liveness / readiness probes"
+    },
+    {
       "name": "Posts",
       "description": "Local post mappings for discovering post ids"
     },
@@ -27,6 +31,20 @@
     }
   ],
   "paths": {
+    "/": {
+      "get": {
+        "operationId": "healthCheck",
+        "tags": ["Health"],
+        "summary": "Health check",
+        "description": "Returns a simple liveness signal. Implemented by the Fastify root\nroute (`src/routes/root.ts`), not by openapi-glue.\n",
+        "x-no-fastify-config": true,
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/GetHealthSuccess"
+          }
+        }
+      }
+    },
     "/posts": {
       "get": {
         "operationId": "getPosts",
@@ -120,6 +138,16 @@
   },
   "components": {
     "schemas": {
+      "HealthStatus": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok"
+          }
+        }
+      },
       "Uuid": {
         "type": "string",
         "format": "uuid"
@@ -420,6 +448,12 @@
       }
     },
     "examples": {
+      "HealthOk": {
+        "summary": "Service is up",
+        "value": {
+          "status": "ok"
+        }
+      },
       "GetPostsFirstPage": {
         "summary": "First page of posts",
         "value": {
@@ -500,6 +534,21 @@
       }
     },
     "responses": {
+      "GetHealthSuccess": {
+        "description": "Service is healthy",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/HealthStatus"
+            },
+            "examples": {
+              "default": {
+                "$ref": "#/components/examples/HealthOk"
+              }
+            }
+          }
+        }
+      },
       "GetPostsSuccess": {
         "description": "Paginated post mappings",
         "content": {

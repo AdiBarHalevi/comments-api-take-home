@@ -1,34 +1,26 @@
 import { createQueuedResponse } from '../../../src/queue/queuedResponse.js'
 
 describe('createQueuedResponse', () => {
-  it('returns the pending record after a successful enqueue', async () => {
-    const pending = { id: 'job-1', status: 'PENDING' as const }
-    const runs: string[] = []
+  it('returns the pending record after enqueuing by commentId', async () => {
+    const pending = { id: 'comment-1', status: 'PENDING' as const }
+    const enqueued: string[] = []
 
     const result = await createQueuedResponse({
-      enqueue: async ({ jobId, run }) => {
-        expect(jobId).toBe(pending.id)
-        runs.push('enqueued')
-        void run
+      enqueue: async ({ commentId }) => {
+        enqueued.push(commentId)
       },
       createPending: async () => pending,
-      run: async () => {
-        runs.push('run')
-      },
-      onFailed: async () => {
-        runs.push('failed')
-      },
       onEnqueueFailed: async () => {
-        runs.push('enqueue-failed')
+        throw new Error('should not run')
       }
     })
 
     expect(result).toEqual(pending)
-    expect(runs).toEqual(['enqueued'])
+    expect(enqueued).toEqual([pending.id])
   })
 
   it('calls onEnqueueFailed and throws 503 when enqueue fails', async () => {
-    const pending = { id: 'job-1' }
+    const pending = { id: 'comment-1' }
     let enqueueFailed = false
 
     await expect(
@@ -37,8 +29,6 @@ describe('createQueuedResponse', () => {
           throw new Error('redis down')
         },
         createPending: async () => pending,
-        run: async () => undefined,
-        onFailed: async () => undefined,
         onEnqueueFailed: async () => {
           enqueueFailed = true
         }

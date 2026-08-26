@@ -123,7 +123,7 @@ describe('createReplyByCommentId', () => {
     })
   })
 
-  it('creates a PENDING comment and enqueues work via callbacks', async () => {
+  it('creates a PENDING comment and enqueues by commentId', async () => {
     const post = makePost()
     const parent = makeComment({ postId: post.id })
     const created = makeComment({
@@ -144,9 +144,8 @@ describe('createReplyByCommentId', () => {
     const result = await createReplyByCommentId({
       request: createMockRequest({
         prisma,
-        enqueue: async ({ jobId, run }) => {
-          enqueued.push(jobId)
-          void run
+        enqueue: async ({ commentId }) => {
+          enqueued.push(commentId)
         }
       }),
       commentId: parent.id,

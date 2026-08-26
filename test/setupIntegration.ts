@@ -2,6 +2,9 @@
  * Jest setupFiles for integration tests — runs before test files load
  * (so before `env.ts` reads process.env). First caller starts containers;
  * others reuse the state file. Ryuk reaps containers when Jest exits.
+ *
+ * The state file can outlive containers (e.g. after a killed Jest run). We
+ * probe Postgres/Redis before reuse so stale ports do not hang `build()`.
  */
 import { execFileSync } from 'node:child_process'
 import {
@@ -12,6 +15,7 @@ import {
   unlinkSync,
   writeFileSync
 } from 'node:fs'
+import net from 'node:net'
 import { resolve } from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import { config as loadDotenv } from 'dotenv'
@@ -30,6 +34,14 @@ function readState(): State | undefined {
   return JSON.parse(readFileSync(statePath, 'utf8')) as State
 }
 
+function clearState(): void {
+  try {
+    unlinkSync(statePath)
+  } catch {
+    // already gone
+  }
+}
+
 function applyEnv({ databaseUrl, redisUrl }: State): void {
   process.env.DATABASE_URL = databaseUrl
   process.env.REDIS_URL = redisUrl
@@ -43,6 +55,37 @@ function tryLock(): number | undefined {
   }
 }
 
+async function canConnect(urlString: string): Promise<boolean> {
+  try {
+    const url = new URL(urlString)
+    const port =
+      Number(url.port) || (url.protocol.startsWith('postgres') ? 5432 : 6379)
+    const host = url.hostname || '127.0.0.1'
+
+    return await new Promise((resolveConnect) => {
+      const socket = net.connect({ host, port }, () => {
+        socket.end()
+        resolveConnect(true)
+      })
+      socket.setTimeout(1000, () => {
+        socket.destroy()
+        resolveConnect(false)
+      })
+      socket.on('error', () => resolveConnect(false))
+    })
+  } catch {
+    return false
+  }
+}
+
+async function isStateHealthy(state: State): Promise<boolean> {
+  const [dbOk, redisOk] = await Promise.all([
+    canConnect(state.databaseUrl),
+    canConnect(state.redisUrl)
+  ])
+  return dbOk && redisOk
+}
+
 async function waitForState(): Promise<State> {
   console.log(
     '[testcontainers] waiting for another worker to finish starting containers'
@@ -50,7 +93,7 @@ async function waitForState(): Promise<State> {
   const deadline = Date.now() + 120_000
   while (Date.now() < deadline) {
     const state = readState()
-    if (state) {
+    if (state && (await isStateHealthy(state))) {
       console.log(
         '[testcontainers] reusing containers started by another worker'
       )
@@ -93,8 +136,14 @@ async function startAndMigrate(): Promise<State> {
 async function ensureContainers(): Promise<State> {
   const existing = readState()
   if (existing) {
-    console.log('[testcontainers] reusing containers from state file')
-    return existing
+    if (await isStateHealthy(existing)) {
+      console.log('[testcontainers] reusing containers from state file')
+      return existing
+    }
+    console.log(
+      '[testcontainers] state file points at unreachable containers; starting fresh'
+    )
+    clearState()
   }
 
   const lockFd = tryLock()
